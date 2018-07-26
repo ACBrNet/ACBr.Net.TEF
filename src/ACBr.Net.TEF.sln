@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACBr.Net.TEF", "ACBr.Net.TEF\ACBr.Net.TEF.csproj", "{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ACBr.Net.TEF.Shared", "ACBr.Net.TEF.Shared\ACBr.Net.TEF.Shared.shproj", "{B9DC0CDB-118B-4908-A7D1-502EE1C94554}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{0F14E58A-8536-4276-B28B-845907BCB5E4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{435D944D-EF25-4A71-B983-96F0E81D84DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACBr.Net.TEF.Demo", "ACBr.Net.TEF.Demo\ACBr.Net.TEF.Demo.csproj", "{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ACBr.Net.TEF.Shared\ACBr.Net.TEF.Shared.projitems*{b97e5e6e-dd7a-4c53-ba2f-fa855fb09343}*SharedItemsImports = 4
+		ACBr.Net.TEF.Shared\ACBr.Net.TEF.Shared.projitems*{b9dc0cdb-118b-4908-a7d1-502ee1c94554}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		COM Interop|Any CPU = COM Interop|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}.COM Interop|Any CPU.ActiveCfg = COM Interop|Any CPU
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}.COM Interop|Any CPU.Build.0 = COM Interop|Any CPU
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}.COM Interop|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}.COM Interop|Any CPU.Build.0 = Release|Any CPU
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B97E5E6E-DD7A-4C53-BA2F-FA855FB09343} = {0F14E58A-8536-4276-B28B-845907BCB5E4}
+		{BDC06717-C2EF-49DC-BB19-B31B07AF4AB2} = {435D944D-EF25-4A71-B983-96F0E81D84DF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2E65C26-0671-4DC7-BA6A-416DAA6F8DAA}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>b9dc0cdb-118b-4908-a7d1-502ee1c94554</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>ACBr.Net.TEF.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ACBrTEF.cs">
+      <SubType>ACBr.Net</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ACBrTEFPrintException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EstadoVenda.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\RetornoCliSiTef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\TEFDial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\TEFDisc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InfoVenda.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModalResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperacaoVenda.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperacaoMensagem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReqEstado.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespCB.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespCBCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespEstado.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespNFCeSAT.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespParceladoPor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespTipoOperacao.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoECF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoEvento.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoTEFOrderedGrouped.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperacaoCampo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TEFCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ACBrTEFGPNaoRespondeException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TefTipo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TipoRelatorio.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\AguardaRespEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\AntesCancelarTransacaoEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\AntesFinalizarRequisicaoEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\BloqueiaMouseTecladoEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ComandaVendaAbreVinculadoEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ComandaVendaEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ComandaVendaImprimeViaEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ComandaPagamentoVendaEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ComandaVendaSubtotalizaEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\DepoisCancelarTransacoesEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\DepoisConfirmarTransacoesEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ExecutaAcaoEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ExibeMensagemEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\InfoVendaEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MudaEstadoReqEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\MudaEstadoRespEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ExibeMenuEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\ObtemCampoEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\TEFCliSiTef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\TEFTxt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IdentificacaoTEF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RequisicaoTEF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoTEF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoTEFCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespParcela.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RespParcelaCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoTEFTxt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TEFArquivo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TEFBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TEFLinha.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UtilTEF.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)ico.bmp" />
+  </ItemGroup>
+</Project>
