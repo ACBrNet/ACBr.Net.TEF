@@ -40,7 +40,7 @@ namespace ACBr.Net.TEF
 {
     [Serializable]
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
-    public class TEFCollection<TTipo> : GenericClone<TTipo>, IEnumerable<TTipo>
+    public class TEFCollection<TTipo> : GenericClone<TTipo>, IEnumerable<TTipo> where TTipo : class
     {
         #region Fields
 

@@ -1,50 +1,124 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using ACBr.Net.Core.Extensions;
+using ACBr.Net.Core;
+using ACBr.Net.Core.InteropServices;
 
 namespace ACBr.Net.TEF
 {
     public static class UtilTEF
     {
-        #region Fields
+        #region InnerTypes
 
-        private struct MSG
+        private sealed class User32Client : ACBrSafeHandle
         {
-            private IntPtr hwnd;
-            private uint message;
-            private IntPtr wParam;
-            private IntPtr lParam;
-            private int time;
-            private int ptX;
-            private int ptY;
+            #region InnerTypes
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct MSG
+            {
+                public IntPtr hwnd;
+                public uint message;
+                public IntPtr wParam;
+                public IntPtr lParam;
+                public uint time;
+                public Point p;
+            }
+
+            private const int PM_REMOVE = 1;
+            private const int PM_NOYIELD = 2;
+            private const int WM_KEYFIRST = 256;
+            private const int WM_KEYLAST = 264;
+
+            private sealed class Delegates
+            {
+                [return: MarshalAs(UnmanagedType.Bool)]
+                [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+                public delegate bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
+
+                [return: MarshalAs(UnmanagedType.Bool)]
+                [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+                public delegate bool SetForegroundWindow(IntPtr hWnd);
+
+                [return: MarshalAs(UnmanagedType.Bool)]
+                [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+                public delegate bool BlockInput([MarshalAs(UnmanagedType.Bool)] bool blockIt);
+            }
+
+            #endregion InnerTypes
+
+            #region Constructors
+
+            public User32Client() : base("user32.dll")
+            {
+                AddMethod<Delegates.PeekMessage>("PeekMessageA");
+                AddMethod<Delegates.SetForegroundWindow>("SetForegroundWindow");
+                AddMethod<Delegates.BlockInput>("BlockInput");
+            }
+
+            #endregion Constructors
+
+            #region Methods
+
+            [HandleProcessCorruptedStateExceptions]
+            public void CleanKeyboardBuffer()
+            {
+                try
+                {
+                    var method = GetMethod<Delegates.PeekMessage>();
+                    while (method(out _, IntPtr.Zero, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE | PM_NOYIELD)) { }
+                }
+                catch (Exception exception)
+                {
+                    throw new ACBrException(exception.Message, exception);
+                }
+            }
+
+            public bool SetForegroundWindow(IntPtr hWnd)
+            {
+                var method = GetMethod<Delegates.SetForegroundWindow>();
+                return ExecuteMethod(() => method(hWnd));
+            }
+
+            public bool BlockInput(bool block)
+            {
+                var method = GetMethod<Delegates.BlockInput>();
+                return ExecuteMethod(() => method(block));
+            }
+
+            #endregion Methods
         }
 
-        private const int PM_REMOVE = 0x0001;
-        private const int WM_KEYFIRST = 0x0100;
-        private const int WM_KEYLAST = 0x0109;
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool PeekMessage(out MSG lpMsg, uint hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
-
-        #endregion Fields
+        #endregion InnerTypes
 
         #region Methods
 
-        [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool BringWindowToFocus(IntPtr hWnd);
+        public static bool BringWindowToFocus(IntPtr hWnd)
+        {
+            using (var cliente = new User32Client())
+            {
+                return cliente.SetForegroundWindow(hWnd);
+            }
+        }
 
         public static void CleanKeyboardBuffer()
         {
-            while (PeekMessage(out _, 0, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE)) { }
+            using (var cliente = new User32Client())
+            {
+                cliente.CleanKeyboardBuffer();
+            }
         }
 
-        [DllImport("user32.dll", EntryPoint = "BlockInput")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool BlockInput([MarshalAs(UnmanagedType.Bool)]bool blockIt);
+        public static bool BlockInput(bool blockIt)
+        {
+            using (var cliente = new User32Client())
+            {
+                return cliente.BlockInput(blockIt);
+            }
+        }
 
         internal static bool DeleteFile(string file)
         {
