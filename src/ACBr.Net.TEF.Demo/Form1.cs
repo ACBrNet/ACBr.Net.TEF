@@ -21,7 +21,7 @@ namespace ACBr.Net.TEF.Demo
 
         private void TefOnOnInfoVenda(object sender, InfoVendaEventArgs e)
         {
-            e.Retorno = EstadoVenda.Livre;
+            e.EstadoVenda = EstadoVenda.Livre;
         }
 
         private void TefOnOnComandaVendaImprimeVia(object sender, ComandaVendaImprimeViaEventArgs e)

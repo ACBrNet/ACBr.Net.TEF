@@ -1421,7 +1421,7 @@ namespace ACBr.Net.TEF
             var e = new InfoVendaEventArgs(InfoVenda.EstadoVenda);
             DoOnInfoVenda(e);
 
-            Guard.Against<ACBrException>(!Enum.IsDefined(typeof(EstadoVenda), e.Retorno),
+            Guard.Against<ACBrException>(!Enum.IsDefined(typeof(EstadoVenda), e.EstadoVenda),
                          "Retorno de [OnInfoEcf( ineEstadoECF, Retorno )] deve ser:" + Environment.NewLine +
                          "[L] = Livre" + Environment.NewLine +
                          "[V] = Venda de Itens" + Environment.NewLine +
@@ -1431,7 +1431,7 @@ namespace ACBr.Net.TEF
                          "[N] - Recebimento Não Fiscal" + Environment.NewLine +
                          "[O] - Outro");
 
-            return e.Retorno;
+            return e.EstadoVenda;
         }
 
         internal bool PagamentoVenda(string indice, decimal valor)
@@ -1490,10 +1490,7 @@ namespace ACBr.Net.TEF
         {
             var e = new InfoVendaEventArgs(operacao);
             DoOnInfoVenda(e);
-
-            Guard.Against<ACBrException>(decimal.TryParse(e.Retorno.ToString(), out var ret), "Erro na conversão do Valor Retornado de: OnInfoECF[{0}]", operacao);
-
-            return ret;
+            return e.Valor;
         }
 
         internal void DoOnInfoVenda(InfoVendaEventArgs e)
@@ -1607,6 +1604,8 @@ namespace ACBr.Net.TEF
 
             GpAtual = TEFTipo.Nenhum;
             Identificacao = new IdentificacaoTEF();
+
+            RespostasPendentes = new RetornoTEFCollection(this);
 
             PathBackup = $"{Assembly.GetExecutingAssembly().GetPath()}\\TEF";
             AutoAtivar = true;

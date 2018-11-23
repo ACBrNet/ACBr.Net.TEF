@@ -47,7 +47,7 @@ namespace ACBr.Net.TEF.Events
         internal InfoVendaEventArgs(InfoVenda operacao)
         {
             Operacao = operacao;
-            Retorno = EstadoVenda.Outro;
+            EstadoVenda = EstadoVenda.Outro;
         }
 
         #endregion Constructor
@@ -64,13 +64,15 @@ namespace ACBr.Net.TEF.Events
         /// Gets or sets the retorno.
         /// </summary>
         /// <value>The retorno.</value>
-        public EstadoVenda Retorno { get; set; }
+        public EstadoVenda EstadoVenda { get; set; }
 
         /// <summary>
         /// Gets or sets the retorno ecf.
         /// </summary>
         /// <value>The retorno ecf.</value>
         public RetornoECF? RetornoECF { get; set; }
+
+        public decimal Valor { get; set; }
 
         #endregion Properties
     }
