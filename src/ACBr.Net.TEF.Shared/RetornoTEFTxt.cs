@@ -38,7 +38,6 @@ namespace ACBr.Net.TEF
     /// <summary>
     /// Classe RespTxt.
     /// </summary>
-    [Serializable]
     public sealed class RetornoTEFTxt : RetornoTEF
     {
         #region Constructor

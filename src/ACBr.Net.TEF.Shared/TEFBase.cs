@@ -48,7 +48,7 @@ namespace ACBr.Net.TEF
     /// <summary>
     /// Classe TEFBase.
     /// </summary>
-    public abstract class TEFBase : IDisposable, IACBrLog
+    public abstract class TEFBase : IACBrLog
     {
         #region Fields
 
@@ -86,18 +86,6 @@ namespace ACBr.Net.TEF
 
             Parent.EstadoReq = ReqEstado.Nenhum;
             Parent.EstadoResp = RespEstado.Nenhum;
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if (Requisicao != null)
-                Requisicao = null;
-
-            if (Resposta != null)
-                Resposta = null;
         }
 
         #endregion Constructor

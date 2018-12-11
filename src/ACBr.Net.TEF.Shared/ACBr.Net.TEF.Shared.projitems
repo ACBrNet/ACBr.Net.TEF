@@ -14,7 +14,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ACBrTEFPrintException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EstadoVenda.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\RetornoCliSiTef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetornoCliSiTef.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\TEFDial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Gerenciadores\TEFDisc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InfoVenda.cs" />
@@ -66,6 +66,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TEFArquivo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TEFBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TEFLinha.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\DeepCopyByExpressionTrees.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UtilTEF.cs" />
   </ItemGroup>
   <ItemGroup>

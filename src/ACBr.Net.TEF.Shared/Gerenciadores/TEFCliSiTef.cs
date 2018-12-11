@@ -1193,7 +1193,7 @@ namespace ACBr.Net.TEF.Gerenciadores
             var dataHora = DataHoraFiscal;
             var dataStr = dataHora.ToString("yyyyMMdd");
             var horaStr = dataHora.ToString("HHmmss");
-            var valorStr = valor.ToString("D2", NumberFormat);
+            var valorStr = valor.ToString(CultureInfo.GetCultureInfo("pt-BR"));
             documentosProcessados = string.Empty;
 
             this.Log().Info($"*** IniciaFuncaoSiTefInterativo. Modalidade: {funcao} Valor: {valorStr} " +
@@ -1267,7 +1267,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                     if (result == 10000)
                     {
                         if (tipoCampo > 0)
-                            Respostas.Add(tipoCampo.ToString(), "");
+                            respostaSitef = Respostas[tipoCampo.ToString()];
 
                         string mensagemCliente;
                         string mensagemOperador;

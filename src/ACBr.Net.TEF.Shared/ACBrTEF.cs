@@ -185,7 +185,7 @@ namespace ACBr.Net.TEF
 
         private TEFBase selectedTEF;
         private TEFTipo gpAtual;
-        private List<TEFBase> gerenciadores;
+        private TEFBase[] gerenciadores;
         private RespEstado estadoResp;
         private ReqEstado estadoReq;
         private DateTime? tempoInicialMensagemOperador;
@@ -1591,16 +1591,16 @@ namespace ACBr.Net.TEF
         /// </summary>
         protected override void OnInitialize()
         {
-            gerenciadores = new List<TEFBase>();
-
             TEFDial = new TEFDial(this);
-            gerenciadores.Add(TEFDial);
-
             TEFDisc = new TEFDisc(this);
-            gerenciadores.Add(TEFDisc);
-
             TEFCliSiTef = new TEFCliSiTef(this);
-            gerenciadores.Add(TEFCliSiTef);
+
+            gerenciadores = new TEFBase[]
+            {
+                TEFDial,
+                TEFDisc,
+                TEFCliSiTef
+            };
 
             GpAtual = TEFTipo.Nenhum;
             Identificacao = new IdentificacaoTEF();

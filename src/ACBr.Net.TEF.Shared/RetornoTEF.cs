@@ -30,14 +30,13 @@
 // ***********************************************************************
 
 using System;
-using ACBr.Net.Core.Generics;
 
 namespace ACBr.Net.TEF
 {
     /// <summary>
     /// Classe RespostaTEF.
     /// </summary>
-    public abstract class RetornoTEF : GenericClone<RetornoTEF>
+    public abstract class RetornoTEF
     {
         #region Fields
 

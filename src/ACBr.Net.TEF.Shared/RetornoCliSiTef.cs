@@ -32,7 +32,7 @@
 using System;
 using ACBr.Net.Core.Extensions;
 
-namespace ACBr.Net.TEF.Gerenciadores
+namespace ACBr.Net.TEF
 {
     /// <inheritdoc />
     public sealed class RetornoCliSiTef : RetornoTEF

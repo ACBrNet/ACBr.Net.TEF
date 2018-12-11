@@ -70,8 +70,12 @@ namespace ACBr.Net.TEF.Events
         /// Gets or sets the retorno ecf.
         /// </summary>
         /// <value>The retorno ecf.</value>
-        public RetornoECF? RetornoECF { get; set; }
+        public EstadoECF? EstadoECF { get; set; }
 
+        /// <summary>
+        /// Gets or sets the retorno ecf.
+        /// </summary>
+        /// <value>The retorno ecf.</value>
         public decimal Valor { get; set; }
 
         #endregion Properties
