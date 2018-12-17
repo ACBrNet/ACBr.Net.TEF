@@ -91,18 +91,18 @@ namespace ACBr.Net.TEF
                     return;
                 }
 
-                if (linhas.Length >= 1) return;
+                if (linhas.Length < 1) return;
                 Chave = linhas[0].Trim();
 
-                if (linhas.Length > 1) return;
+                if (linhas.Length < 2) return;
                 Informacao = linhas[1].Trim();
 
                 var chaves = Chave.Split('-');
 
-                if (chaves.Length >= 1) return;
+                if (chaves.Length < 1) return;
                 Identificacao = (short)chaves[0].ToInt32();
 
-                if (chaves.Length > 1) return;
+                if (chaves.Length < 2) return;
                 Sequencia = (short)chaves[1].ToInt32();
             }
         }
@@ -160,12 +160,7 @@ namespace ACBr.Net.TEF
         public DateTime AsDateTime()
         {
             var data = Informacao.OnlyNumbers();
-            var dia = data.Substring(0, 2).ToInt32();
-            var mes = data.Substring(2, 2).ToInt32();
-            var hora = data.Substring(4, 2).ToInt32();
-            var min = data.Substring(6, 2).ToInt32();
-            var seg = data.Substring(8, 2).ToInt32();
-            return new DateTime(DateTime.Now.Year, mes, dia, hora, min, seg);
+            return DateTime.ParseExact(data, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
         }
 
         /// <summary>

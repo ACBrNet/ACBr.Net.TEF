@@ -465,7 +465,7 @@ namespace ACBr.Net.TEF
                     }
 
                     if (this.Log().IsDebugEnabled)
-                        this.Log().Info(Resposta.Conteudo.AsString());
+                        this.Log().Debug(Resposta.Conteudo.AsString());
                 }
             }
             finally
@@ -611,7 +611,7 @@ namespace ACBr.Net.TEF
                     try
                     {
                         tecladoEstavaLivre = !Parent.TecladoBloqueado;
-                        Parent.BloquearMouseTeclado(true);
+                        Parent.BloquearMouseTeclado();
                         Parent.PagamentoVenda(indicePagamento, valor);
                         Parent.RespostasPendentes.SaldoAPagar = (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
                         if (respostaPendete.Header == "CHQ" && Parent.ChqEmGerencial)
@@ -782,8 +782,8 @@ namespace ACBr.Net.TEF
                                     Thread.Sleep(Parent.EsperaSleep);
                             }
 
-                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, "");
-                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, "");
+                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador);
+                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente);
                         }
                     }
 
