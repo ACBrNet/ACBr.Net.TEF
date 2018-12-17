@@ -1162,6 +1162,77 @@ namespace ACBr.Net.TEF.Gerenciadores
             }
         }
 
+        protected override bool ProcessarRespostaPagamento(string indicePagamento, decimal valor)
+        {
+            // Cria Arquivo de Backup, contendo Todas as Respostas
+            CopiarResposta();
+
+            //Cria cópia do Objeto Resp, e salva no ObjectList "RespostasPendentes"
+            var respostaPendete = Resposta.Clone();
+            respostaPendete.ArqRespPendente = ArqResp;
+            respostaPendete.ViaClienteReduzida = Parent.ImprimirViaClienteReduzida;
+            Parent.RespostasPendentes.Add(respostaPendete);
+
+            var impressaoOk = true;
+            var tecladoEstavaLivre = true;
+
+            if (Parent.AutoEfetuarPagamento)
+            {
+                try
+                {
+                    try
+                    {
+                        tecladoEstavaLivre = !Parent.TecladoBloqueado;
+                        Parent.BloquearMouseTeclado();
+                        Parent.PagamentoVenda(indicePagamento, valor);
+                        Parent.RespostasPendentes.SaldoAPagar = (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
+                        if (respostaPendete.Header == "CHQ" && Parent.ChqEmGerencial)
+                            respostaPendete.OrdemPagamento = 999;
+                        else
+                            respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
+                    }
+                    catch (ACBrTEFPrintException)
+                    {
+                        impressaoOk = false;
+                    }
+                    finally
+                    {
+                        if (tecladoEstavaLivre)
+                            Parent.BloquearMouseTeclado(false);
+                    }
+
+                    if (!impressaoOk)
+                    {
+                        if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes)
+                        {
+                            try
+                            {
+                                Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                            }
+                            catch (Exception)
+                            {
+                                //
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    if (!impressaoOk) CancelarTransacoesPendentes();
+                }
+            }
+
+            if (!impressaoOk) return true;
+
+            FinalizarResposta(false);
+
+            if (!Parent.AutoFinalizarCupom || Parent.RespostasPendentes.SaldoRestante > 0) return true;
+
+            Parent.FinalizarCupom(false);
+            Parent.ImprimirTransacoesPendentes();
+            return true;
+        }
+
         protected override string CopiarResposta()
         {
             if (arqBackUp.IsEmpty()) return base.CopiarResposta();
@@ -1243,7 +1314,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             try
             {
-                Parent.BloquearMouseTeclado(true);
+                Parent.BloquearMouseTeclado();
 
                 int result;
                 var buffer = new StringBuilder(BufferSize);
@@ -1266,11 +1337,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                     if (result == 10000)
                     {
-                        //if (tipoCampo > 0)
-                        //{
-                        //    //if (!Respostas.ContainsKey(tipoCampo.ToString())) Respostas.Add(tipoCampo.ToString(), mensagem);
-                        //    //respostaSitef = Respostas[tipoCampo.ToString()];
-                        //}
+                        if (tipoCampo > 0 && Respostas.ContainsKey(tipoCampo.ToString()))
+                            respostaSitef = Respostas[tipoCampo.ToString()];
 
                         string mensagemCliente;
                         string mensagemOperador;
@@ -1494,8 +1562,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 var obterCampoTexto = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.String);
                                 OnObtemCampo.Raise(this, obterCampoTexto);
                                 respostaSitef = obterCampoTexto.Resposta;
-                                ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo, respostaSitef);
-                                Parent.BloquearMouseTeclado(true);
+                                ((RetornoCliSiTef)Resposta).GravaInformacao(tipoCampo, respostaSitef);
+                                Parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.CheckInputNeeded:
@@ -1503,7 +1571,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 var obterCampoCheque = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.CMC7);
                                 OnObtemCampo.Raise(this, obterCampoCheque);
                                 respostaSitef = obterCampoCheque.Resposta;
-                                Parent.BloquearMouseTeclado(true);
+                                Parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.MoneyInputNeeded:
@@ -1511,7 +1579,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 var obterCampoDecimal = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.Double);
                                 OnObtemCampo.Raise(this, obterCampoDecimal);
                                 respostaSitef = obterCampoDecimal.Resposta;
-                                Parent.BloquearMouseTeclado(true);
+                                Parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.BarcodeInputNeeded:
@@ -1519,7 +1587,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 var obterCampoBarcode = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.BarCode);
                                 OnObtemCampo.Raise(this, obterCampoBarcode);
                                 respostaSitef = obterCampoBarcode.Resposta;
-                                Parent.BloquearMouseTeclado(true);
+                                Parent.BloquearMouseTeclado();
                                 break;
                         }
                     }
@@ -1605,6 +1673,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                 case -5:
                     erro = "";
                     break; // 'Sem comunicação com o SiTef' ; // Comentado pois SiTEF já envia a msg de Erro
+
                 case -6:
                     erro = "Operação cancelada pelo usuário";
                     break;
