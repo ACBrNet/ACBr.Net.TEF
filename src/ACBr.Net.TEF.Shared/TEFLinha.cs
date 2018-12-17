@@ -85,25 +85,25 @@ namespace ACBr.Net.TEF
                 var linhas = $"{linha} ".Split('=');
                 if (linha.IsEmpty() || linhas.Length == 0)
                 {
-                    Informacao = string.Empty;
+                    Informacao    = string.Empty;
                     Identificacao = 0;
-                    Sequencia = 0;
+                    Sequencia     = 0;
                     return;
                 }
 
-                if (linhas.Length >= 1) return;
+                //if (linhas.Length >= 1) return;
                 Chave = linhas[0].Trim();
 
-                if (linhas.Length > 1) return;
+                //if (linhas.Length > 1) return;
                 Informacao = linhas[1].Trim();
 
                 var chaves = Chave.Split('-');
 
-                if (chaves.Length >= 1) return;
-                Identificacao = (short)chaves[0].ToInt32();
+                //if (chaves.Length >= 0) return;
+                Identificacao = (short) chaves[0].ToInt32();
 
-                if (chaves.Length > 1) return;
-                Sequencia = (short)chaves[1].ToInt32();
+                //if (chaves.Length > 1) return;
+                Sequencia = (short) chaves[1].ToInt32();
             }
         }
 
@@ -160,12 +160,13 @@ namespace ACBr.Net.TEF
         public DateTime AsDateTime()
         {
             var data = Informacao.OnlyNumbers();
-            var dia = data.Substring(0, 2).ToInt32();
-            var mes = data.Substring(2, 2).ToInt32();
-            var hora = data.Substring(4, 2).ToInt32();
-            var min = data.Substring(6, 2).ToInt32();
-            var seg = data.Substring(8, 2).ToInt32();
-            return new DateTime(DateTime.Now.Year, mes, dia, hora, min, seg);
+            return DateTime.ParseExact(data, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            //var dia = data.Substring(0, 2).ToInt32();
+            //var mes = data.Substring(2, 2).ToInt32();
+            //var hora = data.Substring(4, 2).ToInt32();
+            //var min = data.Substring(6, 2).ToInt32();
+            //var seg = data.Substring(8, 2).ToInt32();
+            //return new DateTime(DateTime.Now.Year, mes, dia, hora, min, seg);
         }
 
         /// <summary>
@@ -177,9 +178,9 @@ namespace ACBr.Net.TEF
             try
             {
                 var data = Informacao.OnlyNumbers();
-                var dia = data.Substring(0, 2).ToInt32();
-                var mes = data.Substring(2, 2).ToInt32();
-                var ano = data.Substring(4, 4).ToInt32();
+                var dia  = data.Substring(0, 2).ToInt32();
+                var mes  = data.Substring(2, 2).ToInt32();
+                var ano  = data.Substring(4, 4).ToInt32();
                 return new DateTime(ano, mes, dia);
             }
             catch (Exception)
@@ -196,8 +197,8 @@ namespace ACBr.Net.TEF
         {
             var data = Informacao.OnlyNumbers();
             var hora = data.Substring(0, 2).ToInt32();
-            var min = data.Substring(2, 2).ToInt32();
-            var sec = data.Substring(4, 2).ToInt32();
+            var min  = data.Substring(2, 2).ToInt32();
+            var sec  = data.Substring(4, 2).ToInt32();
             return new TimeSpan(hora, min, sec);
         }
 
@@ -225,7 +226,7 @@ namespace ACBr.Net.TEF
         private static string NomeCampo(short identificacao, short sequencia)
         {
             var casas = Math.Max((identificacao.ToString()).Length, 3);
-            return $"{((int)identificacao).ZeroFill(casas)}-{sequencia}";
+            return $"{((int) identificacao).ZeroFill(casas)}-{sequencia}";
         }
 
         #endregion Methods

@@ -99,8 +99,7 @@ namespace ACBr.Net.TEF
         /// <returns>System.String.</returns>
         public string AsString()
         {
-            return arquivo.OrderBy(x => x.Chave)
-                .Select(linha => $"{linha.Chave} = {linha.Informacao}").AsString();
+            return arquivo.OrderBy(x => x.Chave).Select(linha => $"{linha.Chave} = {linha.Informacao}").AsString();
         }
 
         /// <summary>
@@ -117,8 +116,7 @@ namespace ACBr.Net.TEF
         /// <param name="nomeArquivo">O nome do arquivo.</param>
         internal void GravarArquivo(string nomeArquivo)
         {
-            var lines = arquivo.OrderBy(x => x.Chave)
-                .Select(linha => $"{linha.Chave} = {linha.Informacao}").ToArray();
+            var lines = arquivo.OrderBy(x => x.Chave).Select(linha => $"{linha.Chave} = {linha.Informacao}").ToArray();
 
             File.WriteAllLines(nomeArquivo, lines, Encoding.ASCII);
         }
@@ -160,12 +158,24 @@ namespace ACBr.Net.TEF
 
             switch (informacao)
             {
-                case decimal value: strInformacao = value.ToString(CultureInfo.InvariantCulture).Trim(); break;
-                case double value: strInformacao = value.ToString(CultureInfo.InvariantCulture).Trim(); break;
-                case float value: strInformacao = value.ToString(CultureInfo.InvariantCulture).Trim(); break;
-                case DateTime value: strInformacao = value.ToString(value.TimeOfDay == TimeSpan.Zero ? "ddMMyyyy" : "ddMMhhmmss"); break;
-                case TimeSpan value: strInformacao = value.ToString("hhmmss"); break;
-                default: strInformacao = informacao == null ? string.Empty : informacao.ToString().Trim(); break;
+                case decimal value:
+                    strInformacao = value.ToString(CultureInfo.InvariantCulture).Trim();
+                    break;
+                case double value:
+                    strInformacao = value.ToString(CultureInfo.InvariantCulture).Trim();
+                    break;
+                case float value:
+                    strInformacao = value.ToString(CultureInfo.InvariantCulture).Trim();
+                    break;
+                case DateTime value:
+                    strInformacao = value.ToString(value.TimeOfDay == TimeSpan.Zero ? "ddMMyyyy" : "ddMMhhmmss");
+                    break;
+                case TimeSpan value:
+                    strInformacao = value.ToString("hhmmss");
+                    break;
+                default:
+                    strInformacao = informacao == null ? string.Empty : informacao.ToString().Trim();
+                    break;
             }
 
             var line = arquivo.SingleOrDefault(x => x.Chave == chave);
