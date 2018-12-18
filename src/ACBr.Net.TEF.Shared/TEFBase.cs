@@ -565,7 +565,8 @@ namespace ACBr.Net.TEF
         protected virtual bool ProcessarRespostaPagamento(string indicePagamento, decimal valor)
         {
             LerRespostaRequisicao();
-            this.Log().InfoFormat("{0} ProcessarRespostaPagamento: {1} Indice:{2} Valor: {3:c}", Name, Resposta.Header, indicePagamento, valor);
+            this.Log().InfoFormat("{0} ProcessarRespostaPagamento: {1} Indice:{2} Valor: {3:c}", Name, Resposta.Header,
+                indicePagamento, valor);
 
             var ret = Resposta.TransacaoAprovada;
             var ultimaTransacao = valor >= Parent.RespostasPendentes.SaldoRestante;
@@ -578,7 +579,8 @@ namespace ACBr.Net.TEF
 
                 //Ja tem RespostasPendentes ?
                 if (!ultimaTransacao || Parent.RespostasPendentes.Count <= 0) return ret;
-                if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroOutraFormaPagamento) == ModalResult.Yes) return ret;
+                if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroOutraFormaPagamento) ==
+                    ModalResult.Yes) return ret;
 
                 Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
                 Parent.CancelarTransacoesPendentes();
@@ -601,12 +603,14 @@ namespace ACBr.Net.TEF
             respostaPendete.ViaClienteReduzida = Parent.ImprimirViaClienteReduzida;
             Parent.RespostasPendentes.Add(respostaPendete);
 
-            var impressaoOk = true;
+            if (!Parent.AutoEfetuarPagamento) return ret;
+
+            var impressaoOk = false;
             var tecladoEstavaLivre = true;
 
-            if (Parent.AutoEfetuarPagamento)
+            try
             {
-                try
+                while (!impressaoOk)
                 {
                     try
                     {
@@ -618,6 +622,8 @@ namespace ACBr.Net.TEF
                             respostaPendete.OrdemPagamento = 999;
                         else
                             respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
+
+                        impressaoOk = true;
                     }
                     catch (ACBrTEFPrintException)
                     {
@@ -629,32 +635,31 @@ namespace ACBr.Net.TEF
                             Parent.BloquearMouseTeclado(false);
                     }
 
-                    if (!impressaoOk)
+                    if (impressaoOk) continue;
+                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) == ModalResult.Yes) continue;
+
+                    try
                     {
-                        if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes)
-                        {
-                            try
-                            {
-                                Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
-                            }
-                            catch (Exception)
-                            {
-                                //
-                            }
-                        }
+                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                    }
+                    catch (Exception)
+                    {
+                        // Exceção Muda
+                        break;
                     }
                 }
-                finally
-                {
-                    if (!impressaoOk) CancelarTransacoesPendentes();
-                }
+            }
+            finally
+            {
+                if (!impressaoOk) CancelarTransacoesPendentes();
             }
 
             if (!impressaoOk) return ret;
 
             FinalizarResposta(false);
 
-            if (!Parent.AutoFinalizarCupom || Parent.RespostasPendentes.SaldoRestante > 0) return ret;
+            if (Parent.RespostasPendentes.SaldoRestante > 0) return ret;
+            if (!Parent.AutoFinalizarCupom) return ret;
 
             Parent.FinalizarCupom(false);
             Parent.ImprimirTransacoesPendentes();
