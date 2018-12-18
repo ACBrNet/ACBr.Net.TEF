@@ -69,20 +69,18 @@ namespace ACBr.Net.TEF
         /// Gets or sets the linha.
         /// </summary>
         /// <value>The linha.</value>
-        public string Linha
-        {
-            get
-            {
+        public string Linha {
+            get {
                 if (!linha.IsEmpty()) return linha;
                 return Identificacao > 0 ? $"{NomeCampo(Identificacao, Sequencia)}={Informacao}" : string.Empty;
             }
-            set
-            {
+            set {
                 if (linha == value) return;
 
                 linha = value;
 
-                var linhas = $"{linha} ".Split('=');
+                var linhas = linha.Split(new[] { " = " }, StringSplitOptions.None);
+
                 if (linha.IsEmpty() || linhas.Length == 0)
                 {
                     Informacao = string.Empty;

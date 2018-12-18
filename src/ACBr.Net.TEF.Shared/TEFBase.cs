@@ -29,6 +29,12 @@
 // <summary></summary>
 // ***********************************************************************
 
+using ACBr.Net.Core;
+using ACBr.Net.Core.Exceptions;
+using ACBr.Net.Core.Extensions;
+using ACBr.Net.Core.Logging;
+using ACBr.Net.TEF.Events;
+using ACBr.Net.TEF.Gerenciadores;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,12 +42,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ACBr.Net.Core;
-using ACBr.Net.Core.Exceptions;
-using ACBr.Net.Core.Extensions;
-using ACBr.Net.Core.Logging;
-using ACBr.Net.TEF.Events;
-using ACBr.Net.TEF.Gerenciadores;
 
 namespace ACBr.Net.TEF
 {
@@ -186,11 +186,9 @@ namespace ACBr.Net.TEF
         /// Gets or sets a value indicating whether this <see cref="TEFBase"/> is inicializado.
         /// </summary>
         /// <value><c>true</c> if inicializado; otherwise, <c>false</c>.</value>
-        public bool Inicializado
-        {
+        public bool Inicializado {
             get => inicializado;
-            set
-            {
+            set {
                 if (value)
                     Inicializar();
                 else
@@ -889,6 +887,8 @@ namespace ACBr.Net.TEF
             var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
             saldoAPagar -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
             Parent.RespostasPendentes.SaldoAPagar = saldoAPagar;
+
+            Parent.RespostasPendentes.SaldoRestante = valor;
 
             if (Parent.TrocoMaximo <= 0)
             {

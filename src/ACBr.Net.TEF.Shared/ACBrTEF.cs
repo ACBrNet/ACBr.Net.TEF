@@ -33,6 +33,7 @@ using ACBr.Net.Core;
 using ACBr.Net.Core.Exceptions;
 using ACBr.Net.Core.Extensions;
 using ACBr.Net.Core.Logging;
+using ACBr.Net.TEF.Events;
 using ACBr.Net.TEF.Gerenciadores;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using ACBr.Net.TEF.Events;
 
 namespace ACBr.Net.TEF
 {
@@ -334,11 +334,9 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The estado req.</value>
         [Category("Geral")]
-        public ReqEstado EstadoReq
-        {
+        public ReqEstado EstadoReq {
             get => estadoReq;
-            set
-            {
+            set {
                 estadoReq = value;
                 OnMudaEstadoReq.Raise(this, new MudaEstadoReqEventArgs(value));
             }
@@ -356,11 +354,9 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The estado resp.</value>
         [Category("Geral")]
-        public RespEstado EstadoResp
-        {
+        public RespEstado EstadoResp {
             get => estadoResp;
-            set
-            {
+            set {
                 estadoResp = value;
                 OnMudaEstadoResp.Raise(this, new MudaEstadoRespEventArgs(value));
             }
@@ -395,11 +391,9 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The gp atual.</value>
         [Browsable(false)]
-        public TEFTipo GpAtual
-        {
+        public TEFTipo GpAtual {
             get => gpAtual;
-            set
-            {
+            set {
                 if (gpAtual == value)
                     return;
 
@@ -907,13 +901,13 @@ namespace ACBr.Net.TEF
                             {
                                 var ordem = -1;
                                 var pagamentos = RespostasPendentes.OrderedAndGrouped;
-                                for (var k = 0; k < pagamentos.Length - 1; k++)
+                                for (var k = 0; k < pagamentos.Length; k++)
                                 {
                                     var pagamento = pagamentos[k];
                                     if (pagamento.OrdemPagamento >= 999)
                                         gerencial = true;
 
-                                    for (int j = 0; j < RespostasPendentes.Count - 1; j++)
+                                    for (int j = 0; j < RespostasPendentes.Count; j++)
                                     {
                                         var pendente = RespostasPendentes[j];
                                         if (pagamento.OrdemPagamento != pendente.OrdemPagamento)
@@ -1046,7 +1040,7 @@ namespace ACBr.Net.TEF
             }
             finally
             {
-                if (!ConfirmarAntesDosComprovantes || !impressaoOk)
+                if (ConfirmarAntesDosComprovantes || !impressaoOk)
                 {
                     try
                     {

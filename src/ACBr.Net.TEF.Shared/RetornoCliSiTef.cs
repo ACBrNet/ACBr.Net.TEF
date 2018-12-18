@@ -29,8 +29,8 @@
 // <summary></summary>
 // ***********************************************************************
 
-using System;
 using ACBr.Net.Core.Extensions;
+using System;
 
 namespace ACBr.Net.TEF
 {
@@ -185,6 +185,7 @@ namespace ACBr.Net.TEF
                             case 1: CNFEnviado = linha.AsString().ToUpper() == "S"; break;
                             case 2: IndicePagamento = linha.AsString(); break;
                             case 3: OrdemPagamento = linha.AsInt32(); break;
+                            case 102: DocumentoVinculado = linha.AsString(); break;
                             case 103: ValorTotal += linha.AsDecimal(); break;
                             case 500: IdPagamento = linha.AsInt32(); break;
                             case 501: IdRespostaFiscal = linha.AsInt32(); break;

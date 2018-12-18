@@ -25,6 +25,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ACBr.Net.Core;
+using ACBr.Net.Core.Exceptions;
+using ACBr.Net.Core.Extensions;
+using ACBr.Net.Core.InteropServices;
+using ACBr.Net.Core.Logging;
+using ACBr.Net.TEF.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,12 +39,6 @@ using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using ACBr.Net.Core;
-using ACBr.Net.Core.Exceptions;
-using ACBr.Net.Core.Extensions;
-using ACBr.Net.Core.InteropServices;
-using ACBr.Net.Core.Logging;
-using ACBr.Net.TEF.Events;
 
 namespace ACBr.Net.TEF.Gerenciadores
 {
@@ -724,14 +724,12 @@ namespace ACBr.Net.TEF.Gerenciadores
 
         public Dictionary<string, string> ParametrosAdicionais { get; }
 
-        public string DocumentoFiscal
-        {
+        public string DocumentoFiscal {
             get => documentoFiscal.IsEmpty() ? DateTime.Now.ToString("hhmmss") : documentoFiscal;
             set => documentoFiscal = value;
         }
 
-        public DateTime DataHoraFiscal
-        {
+        public DateTime DataHoraFiscal {
             get => dataHoraFiscal ?? DateTime.Now;
             set => dataHoraFiscal = value;
         }
@@ -1606,7 +1604,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                     else if (!digitado || interromper)
                         continua = -1;
 
-                    if ((voltar && result == 10000) || !digitado)
+                    if (voltar && result == 10000 || !digitado)
                     {
                         Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
                         Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
@@ -1614,7 +1612,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                     buffer.Clear();
                     buffer.Append(respostaSitef);
-                } while (result != 10000);
+                } while (result == 10000);
 
                 return result;
             }
