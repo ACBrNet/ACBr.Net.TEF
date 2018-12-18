@@ -73,17 +73,14 @@ namespace ACBr.Net.TEF
             Debito = false;
             Credito = false;
             Digitado = false;
-            var wNumCB = 0;
 
             foreach (var linha in Conteudo)
             {
-                var linStr = linha.Linha.Trim();
-
                 switch (linha.Identificacao)
                 {
-                    case 29: Digitado = (linStr == "True"); break;
+                    case 29: Digitado = (linha.AsString() == "True"); break;
                     case 100:
-                        ModalidadePagto = linStr;
+                        ModalidadePagto = linha.AsString();
                         switch (ModalidadePagto.Substring(0, 2).ToInt32())
                         {
                             case 1: Debito = true; break;
@@ -110,77 +107,77 @@ namespace ACBr.Net.TEF
                         }
                         break;
 
-                    case 101: ModalidadeExtenso = linStr; break;
-                    case 102: ModalidadePagtoDescrita = linStr; break;
+                    case 101: ModalidadeExtenso = linha.AsString(); break;
+                    case 102: ModalidadePagtoDescrita = linha.AsString(); break;
                     case 105:
                         DataHoraTransacaoComprovante = linha.AsDateTime();
                         DataHoraTransacaoHost = DataHoraTransacaoComprovante;
                         DataHoraTransacaoLocal = DataHoraTransacaoComprovante;
                         break;
 
-                    case 120: Autenticacao = linStr; break;
-                    case 121: ImagemComprovante1aVia.AddRange(linStr.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)); break;
-                    case 122: ImagemComprovante2aVia.AddRange(linStr.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)); break;
+                    case 120: Autenticacao = linha.AsString(); break;
+                    case 121: ImagemComprovante1aVia.AddRange(linha.AsString().Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)); break;
+                    case 122: ImagemComprovante2aVia.AddRange(linha.AsString().Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)); break;
                     case 123: TipoTransacao = linha.AsInt32(); break;
                     case 130:
                         Saque = linha.AsDecimal();
                         ValorTotal += Saque;
                         break;
 
-                    case 131: Instituicao = linStr; break;
-                    case 132: CodigoBandeiraPadrao = linStr; break;
+                    case 131: Instituicao = linha.AsString(); break;
+                    case 132: CodigoBandeiraPadrao = linha.AsString(); break;
                     case 133: CodigoAutorizacaoTransacao = linha.AsString(); break;
-                    case 134: NSU = linStr; break;
+                    case 134: NSU = linha.AsString(); break;
                     case 136: BIN = linha.AsString(); break;
                     case 139: ValorEntradaCDC = linha.AsDecimal(); break;
                     case 140: DataEntradaCDC = linha.AsDate(); break;
-                    case 156: Rede = linStr; break;
+                    case 156: Rede = linha.AsString(); break;
                     case 501: TipoPessoa = linha.AsInt32() == 0 ? 'J' : 'F'; break;
-                    case 502: DocumentoPessoa = linStr; break;
+                    case 502: DocumentoPessoa = linha.AsString(); break;
                     case 504: TaxaServico = linha.AsDecimal(); break;
                     case 505: QtdParcelas = linha.AsInt32(); break;
                     case 506: DataPreDatado = linha.AsDate(); break;
                     case 511: QtdParcelas = linha.AsInt32(); break; // Parcelas CDC - Neste caso o campo 505 não é retornado
                     case 515: DataHoraTransacaoCancelada = linha.AsDate(); break;
-                    case 516: NSUTransacaoCancelada = linStr; break;
+                    case 516: NSUTransacaoCancelada = linha.AsString(); break;
                     case 527: DataVencimento = linha.AsDate(); break;
-                    case 589: CodigoOperadoraCelular = linStr; break;
-                    case 590: NomeOperadoraCelular = linStr; break;
+                    case 589: CodigoOperadoraCelular = linha.AsString(); break;
+                    case 590: NomeOperadoraCelular = linha.AsString(); break;
                     case 591: ValorRecargaCelular = linha.AsDecimal(); break;
-                    case 592: NumeroRecargaCelular = linStr; break;
+                    case 592: NumeroRecargaCelular = linha.AsString(); break;
 
                     case 607:
-                        wNumCB = linha.AsInt32();
+                        var wNumCb = linha.AsInt32();
 
-                        if (wNumCB == 1)
+                        if (wNumCb == 1)
                             CorrespBancarios.Clear();
 
                         var cb = CorrespBancarios.AddNew();
-                        cb.DataVencimento = LeInformacao(600, wNumCB).AsDate(); // Data Vencimento do título - CB
-                        cb.ValorPago = LeInformacao(601, wNumCB).AsDecimal(); // Valor Pago do título - CB
-                        cb.ValorOriginal = LeInformacao(602, wNumCB).AsDecimal(); // Valor Original do título - CB
-                        cb.Acrescimo = LeInformacao(603, wNumCB).AsDecimal(); // Valor do Acréscimo - CB
-                        cb.Desconto = LeInformacao(604, wNumCB).AsDecimal(); // Valor do Desconto - CB
-                        cb.DataPagamento = LeInformacao(605, wNumCB).AsDate(); // Data contábil do Pagamento - CB
-                        cb.NSUTransacaoCB = LeInformacao(611, wNumCB).AsString(); // NSU da Transação CB
-                        cb.TipoDocumento = LeInformacao(612, wNumCB).AsInt32(); // Tipo Docto CB - 0:Arrecadação / 1:Título / 2:Tributo
-                        cb.NSUCancelamento = LeInformacao(623, wNumCB).AsString(); // NSU para cancelamento - CB
-                        cb.Documento = LeInformacao(624, wNumCB).AsString(); // Linha Digitável/ Código de Barras do documento pago
+                        cb.DataVencimento = LeInformacao(600, wNumCb).AsDate(); // Data Vencimento do título - CB
+                        cb.ValorPago = LeInformacao(601, wNumCb).AsDecimal(); // Valor Pago do título - CB
+                        cb.ValorOriginal = LeInformacao(602, wNumCb).AsDecimal(); // Valor Original do título - CB
+                        cb.Acrescimo = LeInformacao(603, wNumCb).AsDecimal(); // Valor do Acréscimo - CB
+                        cb.Desconto = LeInformacao(604, wNumCb).AsDecimal(); // Valor do Desconto - CB
+                        cb.DataPagamento = LeInformacao(605, wNumCb).AsDate(); // Data contábil do Pagamento - CB
+                        cb.NSUTransacaoCB = LeInformacao(611, wNumCb).AsString(); // NSU da Transação CB
+                        cb.TipoDocumento = LeInformacao(612, wNumCb).AsInt32(); // Tipo Docto CB - 0:Arrecadação / 1:Título / 2:Tributo
+                        cb.NSUCancelamento = LeInformacao(623, wNumCb).AsString(); // NSU para cancelamento - CB
+                        cb.Documento = LeInformacao(624, wNumCb).AsString(); // Linha Digitável/ Código de Barras do documento pago
                         break;
 
                     case 609: CorrespBancarios.TotalTitulos = linha.AsDecimal(); break;
                     case 610: CorrespBancarios.TotalTitulosNaoPago = linha.AsDecimal(); break;
 
                     case 613:
-                        Cheque = linStr.Substring(20, 6);
-                        CMC7 = linStr;
+                        Cheque = linha.AsString().Substring(20, 6);
+                        CMC7 = linha.AsString();
                         break;
 
-                    case 626: Banco = linStr; break;
-                    case 627: Agencia = linStr; break;
-                    case 628: AgenciaDC = linStr; break;
-                    case 629: Conta = linStr; break;
-                    case 630: ContaDC = linStr; break;
+                    case 626: Banco = linha.AsString(); break;
+                    case 627: Agencia = linha.AsString(); break;
+                    case 628: AgenciaDC = linha.AsString(); break;
+                    case 629: Conta = linha.AsString(); break;
+                    case 630: ContaDC = linha.AsString(); break;
 
                     case 899: // Tipos de Uso Interno do ACBrTEF
                         switch (linha.Sequencia)

@@ -1271,6 +1271,7 @@ namespace ACBr.Net.TEF.Gerenciadores
             if (documento.IsEmpty())
                 documento = IdSeq.ToString();
 
+            Resposta.DocumentoVinculado = documento;
             Resposta.Conteudo.GravarInformacao(header, 899, 100);
             Resposta.Conteudo.GravarInformacao(IdSeq, 899, 101);
             Resposta.Conteudo.GravarInformacao(documento, 899, 102);
