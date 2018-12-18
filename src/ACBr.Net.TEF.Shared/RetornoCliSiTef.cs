@@ -78,15 +78,15 @@ namespace ACBr.Net.TEF
 
             foreach (var linha in Conteudo)
             {
-                var linStr = linha.Linha.Trim();
+                //var linStr = linha.Linha.Trim();
 
                 switch (linha.Identificacao)
                 {
                     case 29:
-                        Digitado = (linStr == "True");
+                        Digitado = (linha.AsString() == "True");
                         break;
                     case 100:
-                        ModalidadePagto = linStr;
+                        ModalidadePagto = linha.AsString();
                         switch (ModalidadePagto.Substring(0, 2).ToInt32())
                         {
                             case 1:
@@ -125,10 +125,10 @@ namespace ACBr.Net.TEF
                         break;
 
                     case 101:
-                        ModalidadeExtenso = linStr;
+                        ModalidadeExtenso = linha.AsString();
                         break;
                     case 102:
-                        ModalidadePagtoDescrita = linStr;
+                        ModalidadePagtoDescrita = linha.AsString();
                         break;
                     case 105:
                         DataHoraTransacaoComprovante = linha.AsDateTime();
@@ -137,13 +137,13 @@ namespace ACBr.Net.TEF
                         break;
 
                     case 120:
-                        Autenticacao = linStr;
+                        Autenticacao = linha.AsString();
                         break;
                     case 121:
-                        ImagemComprovante1aVia.AddRange(linStr.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None));
+                        ImagemComprovante1aVia.AddRange(linha.AsString().Split(new[] {"\r\n", "\n"}, StringSplitOptions.None));
                         break;
                     case 122:
-                        ImagemComprovante2aVia.AddRange(linStr.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None));
+                        ImagemComprovante2aVia.AddRange(linha.AsString().Split(new[] {"\r\n", "\n"}, StringSplitOptions.None));
                         break;
                     case 123:
                         TipoTransacao = linha.AsInt32();
@@ -154,16 +154,16 @@ namespace ACBr.Net.TEF
                         break;
 
                     case 131:
-                        Instituicao = linStr;
+                        Instituicao = linha.AsString();
                         break;
                     case 132:
-                        CodigoBandeiraPadrao = linStr;
+                        CodigoBandeiraPadrao = linha.AsString();
                         break;
                     case 133:
                         CodigoAutorizacaoTransacao = linha.AsString();
                         break;
                     case 134:
-                        NSU = linStr;
+                        NSU = linha.AsString();
                         break;
                     case 136:
                         BIN = linha.AsString();
@@ -175,13 +175,13 @@ namespace ACBr.Net.TEF
                         DataEntradaCDC = linha.AsDate();
                         break;
                     case 156:
-                        Rede = linStr;
+                        Rede = linha.AsString();
                         break;
                     case 501:
                         TipoPessoa = linha.AsInt32() == 0 ? 'J' : 'F';
                         break;
                     case 502:
-                        DocumentoPessoa = linStr;
+                        DocumentoPessoa = linha.AsString();
                         break;
                     case 504:
                         TaxaServico = linha.AsDecimal();
@@ -199,22 +199,22 @@ namespace ACBr.Net.TEF
                         DataHoraTransacaoCancelada = linha.AsDate();
                         break;
                     case 516:
-                        NSUTransacaoCancelada = linStr;
+                        NSUTransacaoCancelada = linha.AsString();
                         break;
                     case 527:
                         DataVencimento = linha.AsDate();
                         break;
                     case 589:
-                        CodigoOperadoraCelular = linStr;
+                        CodigoOperadoraCelular = linha.AsString();
                         break;
                     case 590:
-                        NomeOperadoraCelular = linStr;
+                        NomeOperadoraCelular = linha.AsString();
                         break;
                     case 591:
                         ValorRecargaCelular = linha.AsDecimal();
                         break;
                     case 592:
-                        NumeroRecargaCelular = linStr;
+                        NumeroRecargaCelular = linha.AsString();
                         break;
 
                     case 607:
@@ -244,24 +244,24 @@ namespace ACBr.Net.TEF
                         break;
 
                     case 613:
-                        Cheque = linStr.Substring(20, 6);
-                        CMC7   = linStr;
+                        Cheque = linha.AsString().Substring(20, 6);
+                        CMC7   = linha.AsString();
                         break;
 
                     case 626:
-                        Banco = linStr;
+                        Banco = linha.AsString();
                         break;
                     case 627:
-                        Agencia = linStr;
+                        Agencia = linha.AsString();
                         break;
                     case 628:
-                        AgenciaDC = linStr;
+                        AgenciaDC = linha.AsString();
                         break;
                     case 629:
-                        Conta = linStr;
+                        Conta = linha.AsString();
                         break;
                     case 630:
-                        ContaDC = linStr;
+                        ContaDC = linha.AsString();
                         break;
 
                     case 899: // Tipos de Uso Interno do ACBrTEF
@@ -275,6 +275,9 @@ namespace ACBr.Net.TEF
                                 break;
                             case 3:
                                 OrdemPagamento = linha.AsInt32();
+                                break;
+                            case 102:
+                                DocumentoVinculado = linha.AsString();
                                 break;
                             case 103:
                                 ValorTotal += linha.AsDecimal();

@@ -58,20 +58,23 @@ namespace ACBr.Net.TEF
     {
         #region Constantes
 
-        internal const int    CacbrTefdEsperaSts                 = 7;
-        internal const int    CacbrTefdEsperaMinimaMensagemFinal = 5;
-        internal const int    CacbrTefdEsperaSleep               = 250;
-        internal const int    CacbrTefdNumVias                   = 2;
-        internal const string CacbrTefdDestaqueVia               = "Destaque a {0}ª Via";
-        internal const string CacbrTefdErroEcfNaoLivre           = "ECF não está LIVRE";
-        internal const string CacbrTefdErroEcfNaoResponde        = "Erro na impressão.\r\nDeseja tentar novamente ?";
-        internal const string CacbrTefdErroEcfNaoRespondeInfo    = "Impressora não responde.\r\nDeseja continuar ?";
-        internal const string CacbrTefdErroNaoAtivo              = "O gerenciador padrão {0} não está ativo !";
-        internal const string CacbrTefdErroSemRequisicao         = "Nenhuma Requisição Iniciada";
-        internal const string CacbrTefdErroOutraFormaPagamento   = "Gostaria de continuar a transação com outra(s) forma(s) de pagamento ?";
+        internal const int CacbrTefdEsperaSts = 7;
+        internal const int CacbrTefdEsperaMinimaMensagemFinal = 5;
+        internal const int CacbrTefdEsperaSleep = 250;
+        internal const int CacbrTefdNumVias = 2;
+        internal const string CacbrTefdDestaqueVia = "Destaque a {0}ª Via";
+        internal const string CacbrTefdErroEcfNaoLivre = "ECF não está LIVRE";
+        internal const string CacbrTefdErroEcfNaoResponde = "Erro na impressão.\r\nDeseja tentar novamente ?";
+        internal const string CacbrTefdErroEcfNaoRespondeInfo = "Impressora não responde.\r\nDeseja continuar ?";
+        internal const string CacbrTefdErroNaoAtivo = "O gerenciador padrão {0} não está ativo !";
+        internal const string CacbrTefdErroSemRequisicao = "Nenhuma Requisição Iniciada";
 
-        internal const string CacbrTefdCliSiTefTransacaoEfetuadaReImprimir = "Transação TEF efetuada.\r\nFavor reimprimir último Cupom.\r\n" +
-                                                                             "{0}\r\n(Para Cielo utilizar os 6 últimos dígitos.)";
+        internal const string CacbrTefdErroOutraFormaPagamento =
+            "Gostaria de continuar a transação com outra(s) forma(s) de pagamento ?";
+
+        internal const string CacbrTefdCliSiTefTransacaoEfetuadaReImprimir =
+            "Transação TEF efetuada.\r\nFavor reimprimir último Cupom.\r\n" +
+            "{0}\r\n(Para Cielo utilizar os 6 últimos dígitos.)";
 
         #endregion Constantes
 
@@ -183,13 +186,13 @@ namespace ACBr.Net.TEF
 
         #region Fields
 
-        private TEFBase    selectedTEF;
-        private TEFTipo    gpAtual;
-        private TEFBase[]  gerenciadores;
+        private TEFBase selectedTEF;
+        private TEFTipo gpAtual;
+        private TEFBase[] gerenciadores;
         private RespEstado estadoResp;
-        private ReqEstado  estadoReq;
-        private DateTime?  tempoInicialMensagemOperador;
-        private DateTime?  tempoInicialMensagemCliente;
+        private ReqEstado estadoReq;
+        private DateTime? tempoInicialMensagemOperador;
+        private DateTime? tempoInicialMensagemCliente;
 
         #endregion Fields
 
@@ -272,11 +275,9 @@ namespace ACBr.Net.TEF
         [Category("Geral")]
         public int EsperaMinimaMensagemFinal { get; set; }
 
-        [Category("Geral")]
-        public bool ConfirmarAntesDosComprovantes { get; set; }
+        [Category("Geral")] public bool ConfirmarAntesDosComprovantes { get; set; }
 
-        [Category("Geral")]
-        public bool ImprimirViaClienteReduzida { get; set; }
+        [Category("Geral")] public bool ImprimirViaClienteReduzida { get; set; }
 
         /// <summary>
         /// Gets or sets the number vias.
@@ -313,14 +314,11 @@ namespace ACBr.Net.TEF
         [Category("Identificação")]
         public bool SuportaDesconto { get; set; }
 
-        [Category("Identificação")]
-        public bool SuportaReajusteValor { get; set; }
+        [Category("Identificação")] public bool SuportaReajusteValor { get; set; }
 
-        [Category("Geral")]
-        public bool AutoEfetuarPagamento { get; set; }
+        [Category("Geral")] public bool AutoEfetuarPagamento { get; set; }
 
-        [Category("Geral")]
-        public bool AutoFinalizarCupom { get; set; }
+        [Category("Geral")] public bool AutoFinalizarCupom { get; set; }
 
         /// <summary>
         /// Gets the req.
@@ -436,18 +434,21 @@ namespace ACBr.Net.TEF
         /// <param name="gp">The gp.</param>
         public void Initializar(TEFTipo gp = TEFTipo.Nenhum)
         {
-            Guard.Against<ACBrException>(OnExibeMensagem             == null, "Evento [OnExibeMsg] não programado");
-            Guard.Against<ACBrException>(OnComandaVenda              == null, "Evento [OnComandaECF] não programado");
-            Guard.Against<ACBrException>(OnComandaVendaAbreVinculado == null, "Evento [OnComandaECFAbreVinculado] não programado");
-            Guard.Against<ACBrException>(OnComandaVendaImprimeVia    == null, "Evento [OnComandaECFImprimeVia] não programado");
-            Guard.Against<ACBrException>(OnInfoVenda                 == null, "Evento [OnInfoECF] não programado");
+            Guard.Against<ACBrException>(OnExibeMensagem == null, "Evento [OnExibeMsg] não programado");
+            Guard.Against<ACBrException>(OnComandaVenda == null, "Evento [OnComandaECF] não programado");
+            Guard.Against<ACBrException>(OnComandaVendaAbreVinculado == null,
+                "Evento [OnComandaECFAbreVinculado] não programado");
+            Guard.Against<ACBrException>(OnComandaVendaImprimeVia == null,
+                "Evento [OnComandaECFImprimeVia] não programado");
+            Guard.Against<ACBrException>(OnInfoVenda == null, "Evento [OnInfoECF] não programado");
 
             if (!Directory.Exists(PathBackup))
             {
                 Directory.CreateDirectory(PathBackup);
             }
 
-            Guard.Against<ACBrException>(!Directory.Exists(PathBackup), "Diretório de Backup não existente:{0}{1}", Environment.NewLine, PathBackup);
+            Guard.Against<ACBrException>(!Directory.Exists(PathBackup), "Diretório de Backup não existente:{0}{1}",
+                Environment.NewLine, PathBackup);
 
             if (gp == TEFTipo.Nenhum)
             {
@@ -460,7 +461,8 @@ namespace ACBr.Net.TEF
                     }
                     catch (Exception e)
                     {
-                        this.Log().ErrorFormat("Erro ao inicializar GP {0}{1}{2}", tefClass.Name, Environment.NewLine, e);
+                        this.Log().ErrorFormat("Erro ao inicializar GP {0}{1}{2}", tefClass.Name, Environment.NewLine,
+                            e);
                         erros.AppendLine(e.Message);
                     }
                 }
@@ -471,13 +473,14 @@ namespace ACBr.Net.TEF
             {
                 try
                 {
-                    GpAtual                  = gp;
+                    GpAtual = gp;
                     selectedTEF.Inicializado = true;
-                    selectedTEF.Habilitado   = true;
+                    selectedTEF.Habilitado = true;
                 }
                 catch (Exception e)
                 {
-                    this.Log().ErrorFormat("Erro ao inicializar GP {0}{1}{2}", selectedTEF.Name, Environment.NewLine, e);
+                    this.Log().ErrorFormat("Erro ao inicializar GP {0}{1}{2}", selectedTEF.Name, Environment.NewLine,
+                        e);
                     throw new ACBrException("Erro ao inicializar GP", e);
                 }
             }
@@ -500,7 +503,8 @@ namespace ACBr.Net.TEF
                     }
                     catch (Exception e)
                     {
-                        this.Log().ErrorFormat("Erro ao desinicializar GP {0}{1}{2}", tefClass.Name, Environment.NewLine, e);
+                        this.Log().ErrorFormat("Erro ao desinicializar GP {0}{1}{2}", tefClass.Name,
+                            Environment.NewLine, e);
                         erros.AppendLine(e.Message);
                     }
                 }
@@ -511,12 +515,13 @@ namespace ACBr.Net.TEF
             {
                 try
                 {
-                    GpAtual                  = gp;
+                    GpAtual = gp;
                     selectedTEF.Inicializado = false;
                 }
                 catch (Exception e)
                 {
-                    this.Log().ErrorFormat("Erro ao desinicializar GP {0}{1}{2}", selectedTEF.Name, Environment.NewLine, e);
+                    this.Log().ErrorFormat("Erro ao desinicializar GP {0}{1}{2}", selectedTEF.Name, Environment.NewLine,
+                        e);
                     throw new ACBrException("Erro ao desinicializar GP", e);
                 }
             }
@@ -602,17 +607,17 @@ namespace ACBr.Net.TEF
         /// <param name="chequeDc">The cheque dc.</param>
         /// <param name="compensacao">The compensacao.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool CHQ(decimal valor,            string indicePagamento,      string    documentoVinculado = "",   string cmc7    = "",
-                        char    tipoPessoa = 'F', string documentoPessoa = "", DateTime? dataCheque         = null, string banco   = "",
-                        string  agencia    = "",  string agenciaDc       = "", string    conta              = "",   string contaDc = "", string cheque = "",
-                        string  chequeDc   = "",  string compensacao     = "")
+        public bool CHQ(decimal valor, string indicePagamento, string documentoVinculado = "", string cmc7 = "",
+            char tipoPessoa = 'F', string documentoPessoa = "", DateTime? dataCheque = null, string banco = "",
+            string agencia = "", string agenciaDc = "", string conta = "", string contaDc = "", string cheque = "",
+            string chequeDc = "", string compensacao = "")
         {
             Guard.Against<Exception>(selectedTEF == null, "Nenhum GP selecionado.");
 
             if (!dataCheque.HasValue) dataCheque = DateTime.Now;
 
             return selectedTEF.CHQ(valor, indicePagamento, documentoVinculado, cmc7, tipoPessoa, documentoPessoa,
-                                   dataCheque.Value, banco, agencia, agenciaDc, conta, contaDc, cheque, chequeDc, compensacao);
+                dataCheque.Value, banco, agencia, agenciaDc, conta, contaDc, cheque, chequeDc, compensacao);
         }
 
         /// <summary>
@@ -751,8 +756,7 @@ namespace ACBr.Net.TEF
             }
             finally
             {
-                if (apagarRespostasPendentes)
-                    RespostasPendentes.Clear();
+                if (apagarRespostasPendentes) RespostasPendentes.Clear();
             }
         }
 
@@ -768,38 +772,38 @@ namespace ACBr.Net.TEF
             var est = DoEstadoVenda();
 
             var funcLiberarVenda = new Action(() =>
-                                              {
-                                                  if (est == EstadoVenda.Livre) return;
+            {
+                if (est == EstadoVenda.Livre) return;
 
-                                                  switch (est)
-                                                  {
-                                                      case EstadoVenda.Venda:
-                                                      case EstadoVenda.Pagamento:
-                                                      case EstadoVenda.NaoFiscal:
-                                                          FinalizarCupom(false);
-                                                          break;
+                switch (est)
+                {
+                    case EstadoVenda.Venda:
+                    case EstadoVenda.Pagamento:
+                    case EstadoVenda.NaoFiscal:
+                        FinalizarCupom(false);
+                        break;
 
-                                                      case EstadoVenda.RelatorioGerencial:
-                                                          DoComandaVenda(OperacaoVenda.FechaGerencial);
-                                                          break;
+                    case EstadoVenda.RelatorioGerencial:
+                        DoComandaVenda(OperacaoVenda.FechaGerencial);
+                        break;
 
-                                                      case EstadoVenda.CupomVinculado:
-                                                          DoComandaVenda(OperacaoVenda.FechaVinculado);
-                                                          break;
-                                                  }
+                    case EstadoVenda.CupomVinculado:
+                        DoComandaVenda(OperacaoVenda.FechaVinculado);
+                        break;
+                }
 
-                                                  Guard.Against<ACBrException>(DoEstadoVenda() != EstadoVenda.Livre, CacbrTefdErroEcfNaoLivre);
-                                              });
+                Guard.Against<ACBrException>(DoEstadoVenda() != EstadoVenda.Livre, CacbrTefdErroEcfNaoLivre);
+            });
 
             funcLiberarVenda();
 
             if (ConfirmarAntesDosComprovantes)
                 ConfirmarTransacoesPendentes(false);
 
-            var impressaoOk            = false;
-            var gerencial              = false;
-            var removerMsg             = false;
-            var gerencialAberto        = false;
+            var impressaoOk = false;
+            var gerencial = false;
+            var removerMsg = false;
+            var gerencialAberto = false;
             var msgAutenticacaoAExibir = string.Empty;
             try
             {
@@ -834,14 +838,14 @@ namespace ACBr.Net.TEF
                                         {
                                             removerMsg = true;
                                             DoExibeMsg(OperacaoMensagem.ExibirMsgOperador,
-                                                       pendente.TextoEspecialOperador);
+                                                pendente.TextoEspecialOperador);
                                         }
 
                                         if (pendente.TextoEspecialCliente.IsEmpty())
                                         {
                                             removerMsg = true;
                                             DoExibeMsg(OperacaoMensagem.ExibirMsgCliente,
-                                                       pendente.TextoEspecialCliente);
+                                                pendente.TextoEspecialCliente);
                                         }
                                     }
                                     else
@@ -868,12 +872,13 @@ namespace ACBr.Net.TEF
                                     while (i < NumVias)
                                     {
                                         DoVendaImprimeVia(TipoRelatorio.Gerencial, i,
-                                                          i == 1 ? pendente.ImagemComprovante1aVia : pendente.ImagemComprovante2aVia);
+                                            i == 1 ? pendente.ImagemComprovante1aVia : pendente.ImagemComprovante2aVia);
 
                                         if (i < NumVias || j < RespostasPendentes.Count - 1)
                                         {
                                             DoComandaVenda(OperacaoVenda.PulaLinhas);
-                                            DoExibeMsg(OperacaoMensagem.DestaqueVia, CacbrTefdDestaqueVia.Substitute(i));
+                                            DoExibeMsg(OperacaoMensagem.DestaqueVia,
+                                                CacbrTefdDestaqueVia.Substitute(i));
                                         }
 
                                         i++;
@@ -889,7 +894,8 @@ namespace ACBr.Net.TEF
 
                                     if (ExibirMsgAutenticacao && !pendente.Autenticacao.IsEmpty())
                                     {
-                                        msgAutenticacaoAExibir = $"Favor anotar no verso do Cheque:{Environment.NewLine}{pendente.Autenticacao}";
+                                        msgAutenticacaoAExibir =
+                                            $"Favor anotar no verso do Cheque:{Environment.NewLine}{pendente.Autenticacao}";
                                     }
 
                                     if (j < RespostasPendentes.Count - 1 && !msgAutenticacaoAExibir.IsEmpty())
@@ -904,7 +910,7 @@ namespace ACBr.Net.TEF
                             }
                             else
                             {
-                                var ordem      = -1;
+                                var ordem = -1;
                                 var pagamentos = RespostasPendentes.OrderedAndGrouped;
                                 for (var k = 0; k < pagamentos.Length; k++)
                                 {
@@ -933,13 +939,15 @@ namespace ACBr.Net.TEF
                                             if (pendente.TextoEspecialOperador.IsEmpty())
                                             {
                                                 removerMsg = true;
-                                                DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, pendente.TextoEspecialOperador);
+                                                DoExibeMsg(OperacaoMensagem.ExibirMsgOperador,
+                                                    pendente.TextoEspecialOperador);
                                             }
 
                                             if (pendente.TextoEspecialCliente.IsEmpty())
                                             {
                                                 removerMsg = true;
-                                                DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, pendente.TextoEspecialCliente);
+                                                DoExibeMsg(OperacaoMensagem.ExibirMsgCliente,
+                                                    pendente.TextoEspecialCliente);
                                             }
                                         }
                                         else
@@ -966,20 +974,25 @@ namespace ACBr.Net.TEF
                                             }
                                             else
                                             {
-                                                DoVendaAbreVinculado(pendente.DocumentoVinculado, pagamento.IndicePagamento, pagamento.ValorTotal);
+                                                DoVendaAbreVinculado(pendente.DocumentoVinculado,
+                                                    pagamento.IndicePagamento, pagamento.ValorTotal);
                                             }
                                         }
 
                                         var i = 1;
                                         while (i <= nVias)
                                         {
-                                            DoVendaImprimeVia(gerencial ? TipoRelatorio.Gerencial : TipoRelatorio.Vinculado, i,
-                                                              i == 1 ? pendente.ImagemComprovante1aVia : pendente.ImagemComprovante2aVia);
+                                            DoVendaImprimeVia(
+                                                gerencial ? TipoRelatorio.Gerencial : TipoRelatorio.Vinculado, i,
+                                                i == 1
+                                                    ? pendente.ImagemComprovante1aVia
+                                                    : pendente.ImagemComprovante2aVia);
 
                                             if (i < NumVias || j < RespostasPendentes.Count - 1)
                                             {
                                                 DoComandaVenda(OperacaoVenda.PulaLinhas);
-                                                DoExibeMsg(OperacaoMensagem.DestaqueVia, CacbrTefdDestaqueVia.Substitute(i));
+                                                DoExibeMsg(OperacaoMensagem.DestaqueVia,
+                                                    CacbrTefdDestaqueVia.Substitute(i));
                                             }
 
                                             i++;
@@ -995,7 +1008,8 @@ namespace ACBr.Net.TEF
 
                                         if (ExibirMsgAutenticacao && !pendente.Autenticacao.IsEmpty())
                                         {
-                                            msgAutenticacaoAExibir = $"Favor anotar no verso do Cheque:{Environment.NewLine}{pendente.Autenticacao}";
+                                            msgAutenticacaoAExibir =
+                                                $"Favor anotar no verso do Cheque:{Environment.NewLine}{pendente.Autenticacao}";
                                         }
 
                                         if (j < RespostasPendentes.Count - 1 && !msgAutenticacaoAExibir.IsEmpty())
@@ -1044,7 +1058,7 @@ namespace ACBr.Net.TEF
             }
             finally
             {
-                if (!ConfirmarAntesDosComprovantes || !impressaoOk)
+                if (ConfirmarAntesDosComprovantes || !impressaoOk)
                 {
                     try
                     {
@@ -1090,7 +1104,7 @@ namespace ACBr.Net.TEF
                         try
                         {
                             var estNaoFiscal = EstadoVenda.NaoFiscal;
-                            var est          = DoEstadoVenda();
+                            var est = DoEstadoVenda();
                             while (est != EstadoVenda.Livre)
                             {
                                 // É não fiscal ? Se SIM, vamos passar por todas as fases...
@@ -1124,7 +1138,7 @@ namespace ACBr.Net.TEF
 
                                         case EstadoVenda.Pagamento:
                                             var pagamentos = RespostasPendentes.OrderedAndGrouped;
-                                            var ordem      = 0;
+                                            var ordem = 0;
                                             foreach (var pgt in pagamentos)
                                             {
                                                 ordem++;
@@ -1134,12 +1148,13 @@ namespace ACBr.Net.TEF
                                                     continue;
                                                 }
 
-                                                if (DoOnInfoVendaAsDecimal(InfoVenda.SubTotal) > 0 && pgt.ValorTotal > 0)
+                                                if (DoOnInfoVendaAsDecimal(InfoVenda.SubTotal) > 0 &&
+                                                    pgt.ValorTotal > 0)
                                                     PagamentoVenda(pgt.IndicePagamento, pgt.ValorTotal);
 
                                                 var indice = pgt.IndicePagamento;
                                                 foreach (var pendente in RespostasPendentes
-                                                   .Where(x => x.IndicePagamento == indice))
+                                                    .Where(x => x.IndicePagamento == indice))
                                                 {
                                                     if (pendente.Header == "CHQ" && ChqEmGerencial)
                                                     {
@@ -1370,7 +1385,9 @@ namespace ACBr.Net.TEF
 
             try
             {
-                var tempoInicial = operacao == OperacaoMensagem.ExibirMsgCliente ? tempoInicialMensagemCliente : tempoInicialMensagemOperador;
+                var tempoInicial = operacao == OperacaoMensagem.ExibirMsgCliente
+                    ? tempoInicialMensagemCliente
+                    : tempoInicialMensagemOperador;
 
                 // A mensagem anterior fixou um Tempo mínimo de exibição ?
                 if (tempoInicial.HasValue)
@@ -1420,14 +1437,14 @@ namespace ACBr.Net.TEF
             DoOnInfoVenda(e);
 
             Guard.Against<ACBrException>(!Enum.IsDefined(typeof(EstadoVenda), e.EstadoVenda),
-                                         "Retorno de [OnInfoEcf( ineEstadoECF, Retorno )] deve ser:" + Environment.NewLine +
-                                         "[L] = Livre"                                               + Environment.NewLine +
-                                         "[V] = Venda de Itens"                                      + Environment.NewLine +
-                                         "[P] - Pagamento (ou SubTotal efetuado)"                    + Environment.NewLine +
-                                         "[C] ou [R] - CDC ou Cupom Vinculado"                       + Environment.NewLine +
-                                         "[G] ou [R] - Relatório Gerencial"                          + Environment.NewLine +
-                                         "[N] - Recebimento Não Fiscal"                              + Environment.NewLine +
-                                         "[O] - Outro");
+                "Retorno de [OnInfoEcf( ineEstadoECF, Retorno )] deve ser:" + Environment.NewLine +
+                "[L] = Livre" + Environment.NewLine +
+                "[V] = Venda de Itens" + Environment.NewLine +
+                "[P] - Pagamento (ou SubTotal efetuado)" + Environment.NewLine +
+                "[C] ou [R] - CDC ou Cupom Vinculado" + Environment.NewLine +
+                "[G] ou [R] - Relatório Gerencial" + Environment.NewLine +
+                "[N] - Recebimento Não Fiscal" + Environment.NewLine +
+                "[O] - Outro");
 
             return e.EstadoVenda;
         }
@@ -1448,8 +1465,8 @@ namespace ACBr.Net.TEF
 
             if (e.Retorno == RetornoEvento.Sucesso) return true;
             var erro = e.Retorno == RetornoEvento.ErroExecucao
-                           ? "Erro ao executar [OnComandaECFPagamento]"
-                           : "[OnComandaECFPagamento] não tratada";
+                ? "Erro ao executar [OnComandaECFPagamento]"
+                : "[OnComandaECFPagamento] não tratada";
 
             this.Log().Error(erro);
             throw new ACBrTEFPrintException(erro);
@@ -1477,8 +1494,8 @@ namespace ACBr.Net.TEF
             }
 
             var erro = e.Retorno == RetornoEvento.ErroExecucao
-                           ? "Erro ao executar [OnComandaECFSubtotaliza]"
-                           : "[OnComandaECFSubtotaliza] não tratada";
+                ? "Erro ao executar [OnComandaECFSubtotaliza]"
+                : "[OnComandaECFSubtotaliza] não tratada";
 
             this.Log().Error(erro);
             throw new ACBrException(erro);
@@ -1506,7 +1523,8 @@ namespace ACBr.Net.TEF
 
         internal void DoVendaAbreVinculado(string documentoVinculado, string indicePagamento, decimal valor)
         {
-            Guard.Against<ACBrTEFPrintException>(OnComandaVendaAbreVinculado == null, "Evento [OnComandaECFAbreVinculado] não programado");
+            Guard.Against<ACBrTEFPrintException>(OnComandaVendaAbreVinculado == null,
+                "Evento [OnComandaECFAbreVinculado] não programado");
 
             try
             {
@@ -1529,7 +1547,10 @@ namespace ACBr.Net.TEF
             OnComandaVenda.Raise(this, e);
             if (e.Retorno == RetornoEvento.Sucesso) return;
 
-            var erro = string.Format(e.Retorno == RetornoEvento.ErroExecucao ? "Erro ao executar Operação: [{0}]" : "Operação [{0}] não tratada em [OnComandaECF]", operacao);
+            var erro = string.Format(
+                e.Retorno == RetornoEvento.ErroExecucao
+                    ? "Erro ao executar Operação: [{0}]"
+                    : "Operação [{0}] não tratada em [OnComandaECF]", operacao);
 
             this.Log().Error(erro);
             throw new ACBrException(erro);
@@ -1537,7 +1558,8 @@ namespace ACBr.Net.TEF
 
         internal void DoVendaImprimeVia(TipoRelatorio relatorio, int via, IEnumerable<string> imagemComprovante)
         {
-            Guard.Against<NullReferenceException>(OnComandaVendaImprimeVia == null, "Evento [OnComandaECFImprimeVia] não programado");
+            Guard.Against<NullReferenceException>(OnComandaVendaImprimeVia == null,
+                "Evento [OnComandaECFImprimeVia] não programado");
 
             this.Log().InfoFormat("{0} ECFImprimeVia: {1} Via: {2}", selectedTEF.Name, relatorio, via);
 
@@ -1546,7 +1568,9 @@ namespace ACBr.Net.TEF
 
             if (e.Retorno == RetornoEvento.Sucesso) return;
 
-            var erro = e.Retorno == RetornoEvento.ErroExecucao ? "Erro ao executar [OnComandaECFImprimeVia]" : "[OnComandaECFImprimeVia] não tratada";
+            var erro = e.Retorno == RetornoEvento.ErroExecucao
+                ? "Erro ao executar [OnComandaECFImprimeVia]"
+                : "[OnComandaECFImprimeVia] não tratada";
 
             this.Log().Error(erro);
             throw new ACBrException(erro);
@@ -1587,36 +1611,36 @@ namespace ACBr.Net.TEF
         /// </summary>
         protected override void OnInitialize()
         {
-            TEFDial     = new TEFDial(this);
-            TEFDisc     = new TEFDisc(this);
+            TEFDial = new TEFDial(this);
+            TEFDisc = new TEFDisc(this);
             TEFCliSiTef = new TEFCliSiTef(this);
 
             gerenciadores = new TEFBase[]
-                            {
-                                TEFDial,
-                                TEFDisc,
-                                TEFCliSiTef
-                            };
+            {
+                TEFDial,
+                TEFDisc,
+                TEFCliSiTef
+            };
 
-            GpAtual       = TEFTipo.Nenhum;
+            GpAtual = TEFTipo.Nenhum;
             Identificacao = new IdentificacaoTEF();
 
             RespostasPendentes = new RetornoTEFCollection(this);
 
-            PathBackup                = $"{Assembly.GetExecutingAssembly().GetPath()}\\TEF";
-            AutoAtivar                = true;
-            ExibirMsgAutenticacao     = true;
-            MultiplosCartoes          = false;
-            NumeroMaximoCartoes       = 0;
-            NumVias                   = CacbrTefdNumVias;
-            EsperaSts                 = CacbrTefdEsperaSts;
-            EsperaSleep               = CacbrTefdEsperaSleep;
+            PathBackup = $"{Assembly.GetExecutingAssembly().GetPath()}\\TEF";
+            AutoAtivar = true;
+            ExibirMsgAutenticacao = true;
+            MultiplosCartoes = false;
+            NumeroMaximoCartoes = 0;
+            NumVias = CacbrTefdNumVias;
+            EsperaSts = CacbrTefdEsperaSts;
+            EsperaSleep = CacbrTefdEsperaSleep;
             EsperaMinimaMensagemFinal = CacbrTefdEsperaMinimaMensagemFinal;
-            TecladoBloqueado          = false;
-            ChqEmGerencial            = false;
-            TrocoMaximo               = 0;
-            SuportaDesconto           = true;
-            SuportaSaque              = true;
+            TecladoBloqueado = false;
+            ChqEmGerencial = false;
+            TrocoMaximo = 0;
+            SuportaDesconto = true;
+            SuportaSaque = true;
         }
 
         /// <summary>

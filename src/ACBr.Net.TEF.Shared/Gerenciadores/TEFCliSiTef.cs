@@ -52,29 +52,29 @@ namespace ACBr.Net.TEF.Gerenciadores
     {
         #region Constants
 
-        internal const bool   CacbrTefdCliSiTefImprimeGerencialConcomitante = false;
-        internal const string CacbrTefdCliSiTefPressioneEnter               = "PRESSIONE <ENTER>";
-        internal const string CacbrTefdCliSiTefTransacaoNaoEfetuada         = "Transação não efetuada.";
+        internal const bool CacbrTefdCliSiTefImprimeGerencialConcomitante = false;
+        internal const string CacbrTefdCliSiTefPressioneEnter = "PRESSIONE <ENTER>";
+        internal const string CacbrTefdCliSiTefTransacaoNaoEfetuada = "Transação não efetuada.";
 
         internal const string CacbrTefdCliSiTefTransacaoNaoEfetuadaReterCupom =
             "Transação não efetuada.\r\nFavor reter o Cupom";
 
-        internal const string CacbrTefdCliSiTefTransacaoEfetuadaReImprimir = "Transação TEF efetuada.\r\n"        +
+        internal const string CacbrTefdCliSiTefTransacaoEfetuadaReImprimir = "Transação TEF efetuada.\r\n" +
                                                                              "Favor reimprimir último Cupom.\r\n" +
                                                                              "{0}\r\n(Para Cielo utilizar os 6 últimos dígitos.)";
 
         internal const string CacbrTefdCliSiTefNaoInicializado = "CliSiTEF não inicializado";
-        internal const string CacbrTefdCliSiTefNaoConcluido    = "Requisição anterior não concluida";
-        internal const string CacbrTefdCliSiTefErro1           = "Endereço IP inválido ou não resolvido";
-        internal const string CacbrTefdCliSiTefErro2           = "Código da loja inválido";
-        internal const string CacbrTefdCliSiTefErro3           = "Código de terminal inválido";
-        internal const string CacbrTefdCliSiTefErro6           = "Erro na inicialização do TCP/IP";
-        internal const string CacbrTefdCliSiTefErro7           = "Falta de memória";
-        internal const string CacbrTefdCliSiTefErro8           = "Não encontrou a CliSiTef ou ela está com problemas";
+        internal const string CacbrTefdCliSiTefNaoConcluido = "Requisição anterior não concluida";
+        internal const string CacbrTefdCliSiTefErro1 = "Endereço IP inválido ou não resolvido";
+        internal const string CacbrTefdCliSiTefErro2 = "Código da loja inválido";
+        internal const string CacbrTefdCliSiTefErro3 = "Código de terminal inválido";
+        internal const string CacbrTefdCliSiTefErro6 = "Erro na inicialização do TCP/IP";
+        internal const string CacbrTefdCliSiTefErro7 = "Falta de memória";
+        internal const string CacbrTefdCliSiTefErro8 = "Não encontrou a CliSiTef ou ela está com problemas";
 
         internal const string CacbrTefdCliSiTefErro10 =
             "Erro de acesso na pasta CliSiTef (possível falta de permissão para escrita) \r\n" +
-            "ou o PinPad não está devidamente configurado no arquivo CliSiTef.ini \r\n"        +
+            "ou o PinPad não está devidamente configurado no arquivo CliSiTef.ini \r\n" +
             "ou parâmetros IdLoja e IdTerminal inválidos";
 
         internal const string CacbrTefdCliSiTefErro11 = "Dados inválidos passados pela automação.";
@@ -215,26 +215,26 @@ namespace ACBr.Net.TEF.Gerenciadores
             private class DelegatesStdCall
             {
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-                public delegate int ConfiguraIntSiTefInterativoEx(string enderecoIp,     string codigoLoja,
-                                                                  string numeroTerminal, short  reservado, string parametrosAdicionais);
+                public delegate int ConfiguraIntSiTefInterativoEx(string enderecoIp, string codigoLoja,
+                    string numeroTerminal, short reservado, string parametrosAdicionais);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-                public delegate int IniciaFuncaoSiTefInterativo(int    modalidade, string valor,   string numeroCuponFiscal,
-                                                                string dataFiscal, string horario, string operador, string paramAdic);
+                public delegate int IniciaFuncaoSiTefInterativo(int modalidade, string valor, string numeroCuponFiscal,
+                    string dataFiscal, string horario, string operador, string paramAdic);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-                public delegate int IniciaFuncaoAASiTefInterativo(int    modalidade, string valor,
-                                                                  string numeroCuponFiscal,
-                                                                  string dataFiscal, string horario, string operador, string paramAdic, string produtos);
+                public delegate int IniciaFuncaoAASiTefInterativo(int modalidade, string valor,
+                    string numeroCuponFiscal,
+                    string dataFiscal, string horario, string operador, string paramAdic, string produtos);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-                public delegate void FinalizaTransacaoSiTefInterativo(int    confirma,   string numeroCuponFiscal,
-                                                                      string dataFiscal, string horario);
+                public delegate void FinalizaTransacaoSiTefInterativo(int confirma, string numeroCuponFiscal,
+                    string dataFiscal, string horario);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-                public delegate int ContinuaFuncaoSiTefInterativo(out CommandType proximoComando, out int   tipoCampo,
-                                                                  out short       tamanhoMinimo,  out short tamanhoMaximo, StringBuilder buffer, int tamMaxBuffer,
-                                                                  int             continuaNavegacao);
+                public delegate int ContinuaFuncaoSiTefInterativo(out CommandType proximoComando, out int tipoCampo,
+                    out short tamanhoMinimo, out short tamanhoMaximo, StringBuilder buffer, int tamMaxBuffer,
+                    int continuaNavegacao);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
                 public delegate int EscreveMensagemPermanentePinPad(string mensagem);
@@ -258,9 +258,10 @@ namespace ACBr.Net.TEF.Gerenciadores
                 public delegate int LeSimNaoPinPad(string mensagem);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-                public delegate int EnviaRecebeSiTefDireto(short  redeDestino, short  funcaoSiTef, short         offsetCartao,
-                                                           string dadosTx,     short  tamDadosTx,  StringBuilder dadosRx, short  tamMaxDadosRx, ref short codigoResposta, short tempoEsperaRx,
-                                                           string cupomFiscal, string dataFiscal,  string        horario, string operador,      short     tipoTransacao);
+                public delegate int EnviaRecebeSiTefDireto(short redeDestino, short funcaoSiTef, short offsetCartao,
+                    string dadosTx, short tamDadosTx, StringBuilder dadosRx, short tamMaxDadosRx,
+                    ref short codigoResposta, short tempoEsperaRx,
+                    string cupomFiscal, string dataFiscal, string horario, string operador, short tipoTransacao);
 
                 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
                 public delegate int ObtemQuantidadeTransacoesPendentes(string dataFiscal, string numeroCupon);
@@ -272,26 +273,26 @@ namespace ACBr.Net.TEF.Gerenciadores
             private class DelegatesCdecl
             {
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate int ConfiguraIntSiTefInterativoEx(string enderecoIp,     string codigoLoja,
-                                                                  string numeroTerminal, short  reservado, string parametrosAdicionais);
+                public delegate int ConfiguraIntSiTefInterativoEx(string enderecoIp, string codigoLoja,
+                    string numeroTerminal, short reservado, string parametrosAdicionais);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate int IniciaFuncaoSiTefInterativo(int    modalidade, string valor,   string numeroCuponFiscal,
-                                                                string dataFiscal, string horario, string operador, string paramAdic);
+                public delegate int IniciaFuncaoSiTefInterativo(int modalidade, string valor, string numeroCuponFiscal,
+                    string dataFiscal, string horario, string operador, string paramAdic);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate int IniciaFuncaoAASiTefInterativo(int    modalidade, string valor,
-                                                                  string numeroCuponFiscal,
-                                                                  string dataFiscal, string horario, string operador, string paramAdic, string produtos);
+                public delegate int IniciaFuncaoAASiTefInterativo(int modalidade, string valor,
+                    string numeroCuponFiscal,
+                    string dataFiscal, string horario, string operador, string paramAdic, string produtos);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate void FinalizaTransacaoSiTefInterativo(int    confirma,   string numeroCuponFiscal,
-                                                                      string dataFiscal, string horario);
+                public delegate void FinalizaTransacaoSiTefInterativo(int confirma, string numeroCuponFiscal,
+                    string dataFiscal, string horario);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate int ContinuaFuncaoSiTefInterativo(out CommandType proximoComando, out int   tipoCampo,
-                                                                  out short       tamanhoMinimo,  out short tamanhoMaximo, StringBuilder buffer, int tamMaxBuffer,
-                                                                  int             continuaNavegacao);
+                public delegate int ContinuaFuncaoSiTefInterativo(out CommandType proximoComando, out int tipoCampo,
+                    out short tamanhoMinimo, out short tamanhoMaximo, StringBuilder buffer, int tamMaxBuffer,
+                    int continuaNavegacao);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate int EscreveMensagemPermanentePinPad(string mensagem);
@@ -315,9 +316,10 @@ namespace ACBr.Net.TEF.Gerenciadores
                 public delegate int LeSimNaoPinPad(string mensagem);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate int EnviaRecebeSiTefDireto(short  redeDestino, short  funcaoSiTef, short         offsetCartao,
-                                                           string dadosTx,     short  tamDadosTx,  StringBuilder dadosRx, short  tamMaxDadosRx, ref short codigoResposta, short tempoEsperaRx,
-                                                           string cupomFiscal, string dataFiscal,  string        horario, string operador,      short     tipoTransacao);
+                public delegate int EnviaRecebeSiTefDireto(short redeDestino, short funcaoSiTef, short offsetCartao,
+                    string dadosTx, short tamDadosTx, StringBuilder dadosRx, short tamMaxDadosRx,
+                    ref short codigoResposta, short tempoEsperaRx,
+                    string cupomFiscal, string dataFiscal, string horario, string operador, short tipoTransacao);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate int ObtemQuantidadeTransacoesPendentes(string dataFiscal, string numeroCupon);
@@ -331,7 +333,7 @@ namespace ACBr.Net.TEF.Gerenciadores
             #region Constructors
 
             public CliSitefClient(string path) : base(Path.Combine(path,
-                                                                   IsWindows ? "CliSiTef32I.dll" : "libclisitef.so"))
+                IsWindows ? "CliSiTef32I.dll" : "libclisitef.so"))
             {
                 if (IsWindows)
                 {
@@ -348,7 +350,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                     AddMethod<DelegatesStdCall.LeSenhaDireto>("LeSenhaDireto");
                     AddMethod<DelegatesStdCall.LeSimNaoPinPad>("LeSimNaoPinPad");
                     AddMethod<DelegatesStdCall.EnviaRecebeSiTefDireto>("EnviaRecebeSiTefDireto");
-                    AddMethod<DelegatesStdCall.ObtemQuantidadeTransacoesPendentes>("ObtemQuantidadeTransacoesPendentes");
+                    AddMethod<DelegatesStdCall.ObtemQuantidadeTransacoesPendentes>(
+                        "ObtemQuantidadeTransacoesPendentes");
                     AddMethod<DelegatesStdCall.ValidaCampoCodigoEmBarras>("ValidaCampoCodigoEmBarras");
                 }
                 else
@@ -375,59 +378,59 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             #region Methods
 
-            public int ConfiguraIntSiTefInterativoEx(string enderecoIp,     string codigoLoja,
-                                                     string numeroTerminal, short  reservado, string parametrosAdicionais)
+            public int ConfiguraIntSiTefInterativoEx(string enderecoIp, string codigoLoja,
+                string numeroTerminal, short reservado, string parametrosAdicionais)
             {
                 if (IsWindows)
                 {
                     var method = GetMethod<DelegatesStdCall.ConfiguraIntSiTefInterativoEx>();
                     return ExecuteMethod(() =>
-                                             method(enderecoIp, codigoLoja, numeroTerminal, reservado, parametrosAdicionais));
+                        method(enderecoIp, codigoLoja, numeroTerminal, reservado, parametrosAdicionais));
                 }
                 else
                 {
                     var method = GetMethod<DelegatesCdecl.ConfiguraIntSiTefInterativoEx>();
                     return ExecuteMethod(() =>
-                                             method(enderecoIp, codigoLoja, numeroTerminal, reservado, parametrosAdicionais));
+                        method(enderecoIp, codigoLoja, numeroTerminal, reservado, parametrosAdicionais));
                 }
             }
 
-            public int IniciaFuncaoSiTefInterativo(int    modalidade, string valor,   string numeroCuponFiscal,
-                                                   string dataFiscal, string horario, string operador, string paramAdic)
+            public int IniciaFuncaoSiTefInterativo(int modalidade, string valor, string numeroCuponFiscal,
+                string dataFiscal, string horario, string operador, string paramAdic)
             {
                 if (IsWindows)
                 {
                     var method = GetMethod<DelegatesStdCall.IniciaFuncaoSiTefInterativo>();
                     return ExecuteMethod(() =>
-                                             method(modalidade, valor, numeroCuponFiscal, dataFiscal, horario, operador, paramAdic));
+                        method(modalidade, valor, numeroCuponFiscal, dataFiscal, horario, operador, paramAdic));
                 }
                 else
                 {
                     var method = GetMethod<DelegatesCdecl.IniciaFuncaoSiTefInterativo>();
                     return ExecuteMethod(() =>
-                                             method(modalidade, valor, numeroCuponFiscal, dataFiscal, horario, operador, paramAdic));
+                        method(modalidade, valor, numeroCuponFiscal, dataFiscal, horario, operador, paramAdic));
                 }
             }
 
-            public int IniciaFuncaoAASiTefInterativo(int    modalidade, string valor,   string numeroCuponFiscal,
-                                                     string dataFiscal, string horario, string operador, string paramAdic, string produtos)
+            public int IniciaFuncaoAASiTefInterativo(int modalidade, string valor, string numeroCuponFiscal,
+                string dataFiscal, string horario, string operador, string paramAdic, string produtos)
             {
                 if (IsWindows)
                 {
                     var method = GetMethod<DelegatesStdCall.IniciaFuncaoAASiTefInterativo>();
                     return ExecuteMethod(() => method(modalidade, valor, numeroCuponFiscal, dataFiscal, horario,
-                                                      operador, paramAdic, produtos));
+                        operador, paramAdic, produtos));
                 }
                 else
                 {
                     var method = GetMethod<DelegatesCdecl.IniciaFuncaoAASiTefInterativo>();
                     return ExecuteMethod(() => method(modalidade, valor, numeroCuponFiscal, dataFiscal, horario,
-                                                      operador, paramAdic, produtos));
+                        operador, paramAdic, produtos));
                 }
             }
 
-            public void FinalizaTransacaoSiTefInterativo(int    confirma, string numeroCuponFiscal, string dataFiscal,
-                                                         string horario)
+            public void FinalizaTransacaoSiTefInterativo(int confirma, string numeroCuponFiscal, string dataFiscal,
+                string horario)
             {
                 if (IsWindows)
                 {
@@ -442,9 +445,9 @@ namespace ACBr.Net.TEF.Gerenciadores
             }
 
             [HandleProcessCorruptedStateExceptions]
-            public int ContinuaFuncaoSiTefInterativo(out CommandType proximoComando, out int   tipoCampo,
-                                                     out short       tamanhoMinimo,  out short tamanhoMaximo, StringBuilder buffer, int tamMaxBuffer,
-                                                     int             continuaNavegacao)
+            public int ContinuaFuncaoSiTefInterativo(out CommandType proximoComando, out int tipoCampo,
+                out short tamanhoMinimo, out short tamanhoMaximo, StringBuilder buffer, int tamMaxBuffer,
+                int continuaNavegacao)
             {
                 try
                 {
@@ -452,13 +455,13 @@ namespace ACBr.Net.TEF.Gerenciadores
                     {
                         var method = GetMethod<DelegatesStdCall.ContinuaFuncaoSiTefInterativo>();
                         return method(out proximoComando, out tipoCampo, out tamanhoMinimo, out tamanhoMaximo, buffer,
-                                      tamMaxBuffer, continuaNavegacao);
+                            tamMaxBuffer, continuaNavegacao);
                     }
                     else
                     {
                         var method = GetMethod<DelegatesCdecl.ContinuaFuncaoSiTefInterativo>();
                         return method(out proximoComando, out tipoCampo, out tamanhoMinimo, out tamanhoMaximo, buffer,
-                                      tamMaxBuffer, continuaNavegacao);
+                            tamMaxBuffer, continuaNavegacao);
                     }
                 }
                 catch (Exception exception)
@@ -567,23 +570,28 @@ namespace ACBr.Net.TEF.Gerenciadores
             }
 
             [HandleProcessCorruptedStateExceptions]
-            public int EnviaRecebeSiTefDireto(short  redeDestino, short  funcaoSiTef, short         offsetCartao,
-                                              string dadosTx,     short  tamDadosTx,  StringBuilder dadosRx, short  tamMaxDadosRx, ref short codigoResposta, short tempoEsperaRx,
-                                              string cupomFiscal, string dataFiscal,  string        horario, string operador,      short     tipoTransacao)
+            public int EnviaRecebeSiTefDireto(short redeDestino, short funcaoSiTef, short offsetCartao,
+                string dadosTx, short tamDadosTx, StringBuilder dadosRx, short tamMaxDadosRx, ref short codigoResposta,
+                short tempoEsperaRx,
+                string cupomFiscal, string dataFiscal, string horario, string operador, short tipoTransacao)
             {
                 try
                 {
                     if (IsWindows)
                     {
                         var method = GetMethod<DelegatesStdCall.EnviaRecebeSiTefDireto>();
-                        return method(redeDestino, funcaoSiTef, offsetCartao, dadosTx, tamDadosTx, dadosRx, tamMaxDadosRx,
-                                      ref codigoResposta, tempoEsperaRx, cupomFiscal, dataFiscal, horario, operador, tipoTransacao);
+                        return method(redeDestino, funcaoSiTef, offsetCartao, dadosTx, tamDadosTx, dadosRx,
+                            tamMaxDadosRx,
+                            ref codigoResposta, tempoEsperaRx, cupomFiscal, dataFiscal, horario, operador,
+                            tipoTransacao);
                     }
                     else
                     {
                         var method = GetMethod<DelegatesCdecl.EnviaRecebeSiTefDireto>();
-                        return method(redeDestino, funcaoSiTef, offsetCartao, dadosTx, tamDadosTx, dadosRx, tamMaxDadosRx,
-                                      ref codigoResposta, tempoEsperaRx, cupomFiscal, dataFiscal, horario, operador, tipoTransacao);
+                        return method(redeDestino, funcaoSiTef, offsetCartao, dadosTx, tamDadosTx, dadosRx,
+                            tamMaxDadosRx,
+                            ref codigoResposta, tempoEsperaRx, cupomFiscal, dataFiscal, horario, operador,
+                            tipoTransacao);
                     }
                 }
                 catch (Exception exception)
@@ -628,23 +636,23 @@ namespace ACBr.Net.TEF.Gerenciadores
 
         #region Fields
 
-        private bool           iniciouRequisicao;
-        private bool           reimpressao;
-        private bool           cancelamento;
-        private string         documentosProcessados;
-        private string         arqBackUp;
+        private bool iniciouRequisicao;
+        private bool reimpressao;
+        private bool cancelamento;
+        private string documentosProcessados;
+        private string arqBackUp;
         private CliSitefClient client;
-        private string         documentoFiscal;
-        private DateTime?      dataHoraFiscal;
+        private string documentoFiscal;
+        private DateTime? dataHoraFiscal;
 
         private const int BufferSize = 20000;
 
         private static readonly NumberFormatInfo NumberFormat = new NumberFormatInfo()
-                                                                {
-                                                                    NumberDecimalDigits    = 2,
-                                                                    NumberDecimalSeparator = ",",
-                                                                    NumberGroupSeparator   = ".",
-                                                                };
+        {
+            NumberDecimalDigits = 2,
+            NumberDecimalSeparator = ",",
+            NumberGroupSeparator = ".",
+        };
 
         #endregion Fields
 
@@ -665,52 +673,50 @@ namespace ACBr.Net.TEF.Gerenciadores
         internal TEFCliSiTef(ACBrTEF parent) : base(parent, TEFTipo.CliSiTef)
         {
             iniciouRequisicao = false;
-            reimpressao       = false;
-            cancelamento      = false;
-            ArqReq            = string.Empty;
-            ArqResp           = string.Empty;
-            ArqSTS            = string.Empty;
-            ArqTemp           = string.Empty;
-            GPExeName         = string.Empty;
-            Name              = "CliSiTef";
+            reimpressao = false;
+            cancelamento = false;
+            ArqReq = string.Empty;
+            ArqResp = string.Empty;
+            ArqSTS = string.Empty;
+            ArqTemp = string.Empty;
+            GPExeName = string.Empty;
+            Name = "CliSiTef";
 
-            EnderecoIP     = string.Empty;
-            CodigoLoja     = string.Empty;
+            EnderecoIP = string.Empty;
+            CodigoLoja = string.Empty;
             NumeroTerminal = string.Empty;
-            Operador       = string.Empty;
-            Restricoes     = string.Empty;
+            Operador = string.Empty;
+            Restricoes = string.Empty;
 
             DocumentoFiscal = string.Empty;
-            dataHoraFiscal  = null;
+            dataHoraFiscal = null;
 
-            OperacaoATV         = 111; // 111 - Teste de comunicação com o SiTef
+            OperacaoATV = 111; // 111 - Teste de comunicação com o SiTef
             OperacaoReImpressao = 112; // 112 - Menu Re-impressão
-            OperacaoPRE         = 115; // 115 - Pré-autorização
-            OperacaoADM         = 110; // 110 - Abre o leque das transações Gerenciais
-            OperacaoCRT         = 0;   // A CliSiTef permite que o operador escolha a forma
+            OperacaoPRE = 115; // 115 - Pré-autorização
+            OperacaoADM = 110; // 110 - Abre o leque das transações Gerenciais
+            OperacaoCRT = 0; // A CliSiTef permite que o operador escolha a forma
             // de pagamento através de menus
-            OperacaoCHQ = 1;   // Cheque
+            OperacaoCHQ = 1; // Cheque
             OperacaoCNC = 200; // 200 Cancelamento Normal: Inicia a coleta dos dados
             // no ponto necessário para fazer o cancelamento de uma
             // transação de débito ou crédito, sem ser necessário
             // passar antes pelo menu de transações administrativas
 
             documentosProcessados = string.Empty;
-            ExibirErroRetorno     = false;
+            ExibirErroRetorno = false;
 
             ParametrosAdicionais = new Dictionary<string, string>();
-            Respostas            = new Dictionary<string, string>();
+            Respostas = new Dictionary<string, string>();
         }
 
         #endregion Constructor
 
         #region Properties
 
-        [Browsable(false)]
-        public string PathDLL { get; set; }
+        [Browsable(false)] public string PathDLL { get; set; }
 
-        [Browsable(false)]
-        public Dictionary<string, string> Respostas { get; }
+        [Browsable(false)] public Dictionary<string, string> Respostas { get; }
 
         public string EnderecoIP { get; set; }
 
@@ -763,7 +769,7 @@ namespace ACBr.Net.TEF.Gerenciadores
         {
             if (Inicializado) return;
 
-            Guard.Against<ACBrException>(OnExibeMenu  == null, "Evento [OnExibeMenu] não programado");
+            Guard.Against<ACBrException>(OnExibeMenu == null, "Evento [OnExibeMenu] não programado");
             Guard.Against<ACBrException>(OnObtemCampo == null, "Evento [OnObtemCampo] não programado");
 
             client = new CliSitefClient(PathDLL);
@@ -782,7 +788,7 @@ namespace ACBr.Net.TEF.Gerenciadores
             this.Log().Info($"ConfiguraIntSiTefInterativoEx - EnderecoIP: {EnderecoIP} CodigoLoja: {CodigoLoja} " +
                             $"NumeroTerminal: {NumeroTerminal} Resultado: 0 ParametrosAdicionais: {parametros}");
 
-            var ret  = client.ConfiguraIntSiTefInterativoEx(EnderecoIP, CodigoLoja, NumeroTerminal, 0, parametros);
+            var ret = client.ConfiguraIntSiTefInterativoEx(EnderecoIP, CodigoLoja, NumeroTerminal, 0, parametros);
             var erro = string.Empty;
             switch (ret)
             {
@@ -927,11 +933,12 @@ namespace ACBr.Net.TEF.Gerenciadores
         }
 
         /// <inheritdoc />
-        public override bool CHQ(decimal valor,      string indicePagamento, string    documentoVinculado, string cmc7,
-                                 char    tipoPessoa, string documentoPessoa, DateTime? dataCheque,         string banco,  string agencia,
-                                 string  agenciaDc,  string conta,           string    contaDc,            string cheque, string chequeDc, string compensacao)
+        public override bool CHQ(decimal valor, string indicePagamento, string documentoVinculado, string cmc7,
+            char tipoPessoa, string documentoPessoa, DateTime? dataCheque, string banco, string agencia,
+            string agenciaDc, string conta, string contaDc, string cheque, string chequeDc, string compensacao)
         {
-            var formataCampo = new Func<string, int, string>((campo, tamanho) => campo.OnlyNumbers().FillRight(tamanho));
+            var formataCampo =
+                new Func<string, int, string>((campo, tamanho) => campo.OnlyNumbers().FillRight(tamanho));
 
             if (!documentoVinculado.IsEmpty() && valor != 0)
                 VerificarTransacaoPagamento(valor);
@@ -947,9 +954,10 @@ namespace ACBr.Net.TEF.Gerenciadores
             if (!cmc7.IsEmpty())
                 Respostas.Add("517", $"1:{cmc7}");
             else
-                Respostas.Add("517", $"0:{formataCampo(compensacao, 3)}{formataCampo(banco, 3)}{formataCampo(agencia, 4)}" +
-                                     $"{formataCampo(agenciaDc, 1)}{formataCampo(conta, 10)}{formataCampo(contaDc, 1)}"    +
-                                     $"{formataCampo(cheque, 6)}{formataCampo(chequeDc, 1)}");
+                Respostas.Add("517",
+                    $"0:{formataCampo(compensacao, 3)}{formataCampo(banco, 3)}{formataCampo(agencia, 4)}" +
+                    $"{formataCampo(agenciaDc, 1)}{formataCampo(conta, 10)}{formataCampo(contaDc, 1)}" +
+                    $"{formataCampo(cheque, 6)}{formataCampo(chequeDc, 1)}");
 
             var retri = Restricoes;
             if (retri.IsEmpty())
@@ -1045,23 +1053,26 @@ namespace ACBr.Net.TEF.Gerenciadores
         /// <param name="cupomFiscal"></param>
         /// <param name="confirmar"></param>
         /// <returns></returns>
-        public int EnviaRecebeSiTefDireto(short  redeDestino, short      funcaoSiTef, short     offsetCartao,
-                                          string dadosTx,     ref string dadosRx,     ref short codigoResposta, short tempoEsperaRx,
-                                          string cupomFiscal, bool       confirmar)
+        public int EnviaRecebeSiTefDireto(short redeDestino, short funcaoSiTef, short offsetCartao,
+            string dadosTx, ref string dadosRx, ref short codigoResposta, short tempoEsperaRx,
+            string cupomFiscal, bool confirmar)
         {
-            var aNow    = DateTime.Now;
+            var aNow = DateTime.Now;
             var dataStr = aNow.ToString("yyyyMMdd");
             var horaStr = aNow.ToString("HHmmss");
-            var buffer  = new StringBuilder(BufferSize);
+            var buffer = new StringBuilder(BufferSize);
 
-            this.Log().Info($"EnviaRecebeSiTefDireto -> Rede: {redeDestino}, Funcao: {funcaoSiTef}, OffSetCartao: {offsetCartao}" +
-                            $", DadosTX: {dadosTx}, TimeOut: {tempoEsperaRx},  Cupom: {cupomFiscal}"                              +
-                            $", {(confirmar ? "Confirmar" : "Não Confirmar")}");
+            this.Log().Info(
+                $"EnviaRecebeSiTefDireto -> Rede: {redeDestino}, Funcao: {funcaoSiTef}, OffSetCartao: {offsetCartao}" +
+                $", DadosTX: {dadosTx}, TimeOut: {tempoEsperaRx},  Cupom: {cupomFiscal}" +
+                $", {(confirmar ? "Confirmar" : "Não Confirmar")}");
 
             Guard.Against<ACBrException>(client == null, CacbrTefdCliSiTefNaoInicializado);
 
-            var result = client.EnviaRecebeSiTefDireto(redeDestino, funcaoSiTef, offsetCartao, dadosTx, (short) dadosTx.Length,
-                                                       buffer, BufferSize, ref codigoResposta, tempoEsperaRx, cupomFiscal, dataStr, horaStr, Operador, (short) (confirmar ? 1 : 0));
+            var result = client.EnviaRecebeSiTefDireto(redeDestino, funcaoSiTef, offsetCartao, dadosTx,
+                (short) dadosTx.Length,
+                buffer, BufferSize, ref codigoResposta, tempoEsperaRx, cupomFiscal, dataStr, horaStr, Operador,
+                (short) (confirmar ? 1 : 0));
 
             dadosRx = buffer.ToString().Trim();
             return result;
@@ -1100,8 +1111,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             documentosProcessados += $"{documentoVinculado}|";
 
-            var dataStr     = DateTime.Now.ToString("yyyyMMdd");
-            var horaStr     = DateTime.Now.ToString("hhmmss");
+            var dataStr = DateTime.Now.ToString("yyyyMMdd");
+            var horaStr = DateTime.Now.ToString("hhmmss");
             var finalizacao = (confirma || cancelamento) ? 1 : 0;
 
             this.Log().Info($"*** FinalizaTransacaoSiTefInterativo. Confirma: {(finalizacao == 1 ? "Sim" : "Não")} " +
@@ -1128,7 +1139,9 @@ namespace ACBr.Net.TEF.Gerenciadores
                     estado = EstadoVenda.Outro;
                 }
 
-                aMsg = estado == EstadoVenda.Outro ? CacbrTefdCliSiTefTransacaoNaoEfetuada : CacbrTefdCliSiTefTransacaoNaoEfetuadaReterCupom;
+                aMsg = estado == EstadoVenda.Outro
+                    ? CacbrTefdCliSiTefTransacaoNaoEfetuada
+                    : CacbrTefdCliSiTefTransacaoNaoEfetuadaReterCupom;
             }
 
             Parent.DoExibeMsg(OperacaoMensagem.OK, aMsg);
@@ -1188,7 +1201,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                     try
                     {
                         Parent.PagamentoVenda(indicePagamento, valor);
-                        Parent.RespostasPendentes.SaldoAPagar = (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
+                        Parent.RespostasPendentes.SaldoAPagar =
+                            (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
                         respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
                         impressaoOk = true;
                     }
@@ -1198,7 +1212,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                     }
 
                     if (impressaoOk) continue;
-                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) == ModalResult.Yes) continue;
+                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) ==
+                        ModalResult.Yes) continue;
 
                     try
                     {
@@ -1228,13 +1243,15 @@ namespace ACBr.Net.TEF.Gerenciadores
         protected override string CopiarResposta()
         {
             if (arqBackUp.IsEmpty()) return base.CopiarResposta();
-            if (!UtilTEF.DeleteFile(arqBackUp)) throw new ACBrException($"Não foi possivel apagar o arquivo \"{arqBackUp}\" de backup!");
+            if (!UtilTEF.DeleteFile(arqBackUp))
+                throw new ACBrException($"Não foi possivel apagar o arquivo \"{arqBackUp}\" de backup!");
 
             arqBackUp = string.Empty;
             return base.CopiarResposta();
         }
 
-        private int FazerRequisicao(int funcao, string header, decimal valor = 0, string documento = "", string restricoes = "")
+        private int FazerRequisicao(int funcao, string header, decimal valor = 0, string documento = "",
+            string restricoes = "")
         {
             var result = 0;
 
@@ -1243,12 +1260,12 @@ namespace ACBr.Net.TEF.Gerenciadores
             if (documento.IsEmpty()) documento = DocumentoFiscal;
 
             Requisicao.DocumentoVinculado = documento;
-            Requisicao.ValorTotal         = valor;
+            Requisicao.ValorTotal = valor;
 
             Guard.Against<ACBrException>(AguardandoResposta, CacbrTefdCliSiTefNaoConcluido);
 
             if (restricoes.IndexOf(@"{TipoTratamento=4}", StringComparison.Ordinal) == -1 &&
-                header.IsIn("CRT", "CHQ")                                                 && SuportaDesconto())
+                header.IsIn("CRT", "CHQ") && SuportaDesconto())
             {
                 restricoes += "{TipoTratamento=4}";
             }
@@ -1256,23 +1273,24 @@ namespace ACBr.Net.TEF.Gerenciadores
             iniciouRequisicao = true;
 
             var dataHora = DataHoraFiscal;
-            var dataStr  = dataHora.ToString("yyyyMMdd");
-            var horaStr  = dataHora.ToString("HHmmss");
+            var dataStr = dataHora.ToString("yyyyMMdd");
+            var horaStr = dataHora.ToString("HHmmss");
             var valorStr = valor.ToString(CultureInfo.GetCultureInfo("pt-BR"));
             documentosProcessados = string.Empty;
 
             this.Log().Info($"*** IniciaFuncaoSiTefInterativo. Modalidade: {funcao} Valor: {valorStr} " +
-                            $"Documento: {documento} Data: {dataStr} Hora: {horaStr} "                  +
+                            $"Documento: {documento} Data: {dataStr} Hora: {horaStr} " +
                             $"Operador: {Operador} Restricoes: {restricoes}");
 
             result = client.IniciaFuncaoSiTefInterativo(funcao, valorStr, documento, dataStr, horaStr, Operador,
-                                                        restricoes);
+                restricoes);
 
             Resposta.Clear();
             IdSeq++;
             if (documento.IsEmpty())
                 documento = IdSeq.ToString();
 
+            Resposta.DocumentoVinculado = documento;
             Resposta.Conteudo.GravarInformacao(header, 899, 100);
             Resposta.Conteudo.GravarInformacao(IdSeq, 899, 101);
             Resposta.Conteudo.GravarInformacao(documento, 899, 102);
@@ -1285,22 +1303,22 @@ namespace ACBr.Net.TEF.Gerenciadores
         private int ContinuarRequisicao(bool imprimirComprovantes)
         {
             var processaMensagemTela = new Func<string, string>(mensagemProcessar =>
-                                                                {
-                                                                    mensagemProcessar = mensagemProcessar.Replace("@", Environment.NewLine);
-                                                                    mensagemProcessar = mensagemProcessar.Replace("/n", Environment.NewLine);
-                                                                    return mensagemProcessar;
-                                                                });
+            {
+                mensagemProcessar = mensagemProcessar.Replace("@", Environment.NewLine);
+                mensagemProcessar = mensagemProcessar.Replace("/n", Environment.NewLine);
+                return mensagemProcessar;
+            });
 
-            var continua        = 0;
-            var captionMenu     = string.Empty;
+            var continua = 0;
+            var captionMenu = string.Empty;
             var gerencialAberto = false;
-            var impressaoOk     = true;
-            var houveImpressao  = false;
+            var impressaoOk = true;
+            var houveImpressao = false;
             iniciouRequisicao = true;
-            cancelamento      = false;
-            reimpressao       = false;
+            cancelamento = false;
+            reimpressao = false;
             var interromper = false;
-            arqBackUp          = string.Empty;
+            arqBackUp = string.Empty;
             AguardandoResposta = true;
             var fechaGerencialAberto = true;
 
@@ -1313,19 +1331,22 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                 do
                 {
-                    this.Log().Info($"ContinuaFuncaoSiTefInterativo, Chamando: Continua = {continua} Buffer = {buffer}");
+                    this.Log().Info(
+                        $"ContinuaFuncaoSiTefInterativo, Chamando: Continua = {continua} Buffer = {buffer}");
 
-                    result = client.ContinuaFuncaoSiTefInterativo(out var proximoComando, out var tipoCampo, out var tamanhoMinimo,
-                                                                  out var tamanhoMaximo, buffer, BufferSize, continua);
+                    result = client.ContinuaFuncaoSiTefInterativo(out var proximoComando, out var tipoCampo,
+                        out var tamanhoMinimo,
+                        out var tamanhoMaximo, buffer, BufferSize, continua);
 
                     continua = 0;
-                    var mensagem      = buffer.ToString().Trim();
+                    var mensagem = buffer.ToString().Trim();
                     var respostaSitef = string.Empty;
-                    var voltar        = false;
-                    var digitado      = true;
+                    var voltar = false;
+                    var digitado = true;
 
-                    this.Log().Info($"ContinuaFuncaoSiTefInterativo, Retornos: STS = {result} ProximoComando = {(int)proximoComando} " +
-                                    $"TipoCampo = {tipoCampo} Buffer = {mensagem} Tam.Min = {tamanhoMinimo} Tam.Max = {tamanhoMaximo}");
+                    this.Log().Info(
+                        $"ContinuaFuncaoSiTefInterativo, Retornos: STS = {result} ProximoComando = {(int) proximoComando} " +
+                        $"TipoCampo = {tipoCampo} Buffer = {mensagem} Tam.Min = {tamanhoMinimo} Tam.Max = {tamanhoMaximo}");
 
                     if (result == 10000)
                     {
@@ -1342,15 +1363,18 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 switch (tipoCampo)
                                 {
                                     case 15:
-                                        ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo, "True"); //Selecionou Debito;
+                                        ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo,
+                                            "True"); //Selecionou Debito;
                                         break;
 
                                     case 25:
-                                        ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo, "True"); //Selecionou Debito;
+                                        ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo,
+                                            "True"); //Selecionou Debito;
                                         break;
 
                                     case 29:
-                                        ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo, "True"); // Cartão Digitado;
+                                        ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo,
+                                            "True"); // Cartão Digitado;
                                         break;
 
                                     case 56:
@@ -1371,7 +1395,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                             if (!houveImpressao)
                                             {
                                                 houveImpressao = true;
-                                                arqBackUp      = CopiarResposta();
+                                                arqBackUp = CopiarResposta();
                                             }
 
                                             impressaoOk = false;
@@ -1390,24 +1414,29 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                                 switch (estado)
                                                                 {
                                                                     case EstadoVenda.CupomVinculado:
-                                                                        Parent.DoComandaVenda(OperacaoVenda.FechaVinculado);
+                                                                        Parent.DoComandaVenda(OperacaoVenda
+                                                                            .FechaVinculado);
                                                                         break;
 
                                                                     case EstadoVenda.RelatorioGerencial:
-                                                                        Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
+                                                                        Parent.DoComandaVenda(OperacaoVenda
+                                                                            .FechaGerencial);
                                                                         break;
 
                                                                     case EstadoVenda.Venda:
                                                                     case EstadoVenda.Pagamento:
                                                                     case EstadoVenda.NaoFiscal:
-                                                                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                                                                        Parent.DoComandaVenda(
+                                                                            OperacaoVenda.CancelaCupom);
                                                                         break;
                                                                 }
 
-                                                                gerencialAberto      = false;
+                                                                gerencialAberto = false;
                                                                 fechaGerencialAberto = false;
 
-                                                                Guard.Against<ACBrTEFPrintException>(Estado != EstadoVenda.Livre, ACBrTEF.CacbrTefdErroEcfNaoLivre);
+                                                                Guard.Against<ACBrTEFPrintException>(
+                                                                    Estado != EstadoVenda.Livre,
+                                                                    ACBrTEF.CacbrTefdErroEcfNaoLivre);
                                                             }
 
                                                             mensagem = Resposta.LeInformacao(i).AsString();
@@ -1421,10 +1450,12 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                                 else
                                                                 {
                                                                     Parent.DoComandaVenda(OperacaoVenda.PulaLinhas);
-                                                                    Parent.DoExibeMsg(OperacaoMensagem.DestaqueVia, ACBrTEF.CacbrTefdDestaqueVia.Substitute(1));
+                                                                    Parent.DoExibeMsg(OperacaoMensagem.DestaqueVia,
+                                                                        ACBrTEF.CacbrTefdDestaqueVia.Substitute(1));
                                                                 }
 
-                                                                Parent.DoVendaImprimeVia(TipoRelatorio.Gerencial, i - 120, mensagem.Split((char) 10));
+                                                                Parent.DoVendaImprimeVia(TipoRelatorio.Gerencial,
+                                                                    i - 120, mensagem.Split((char) 10));
                                                                 impressaoOk = true;
                                                             }
 
@@ -1443,9 +1474,11 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                     }
 
                                                     if (impressaoOk) continue;
-                                                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes) break;
+                                                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo,
+                                                            ACBrTEF.CacbrTefdErroEcfNaoResponde) !=
+                                                        ModalResult.Yes) break;
 
-                                                    i                    = 121;
+                                                    i = 121;
                                                     fechaGerencialAberto = true;
                                                 }
                                             }
@@ -1468,19 +1501,23 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                             case CommandType.DisplayOperatorMessage:
                                 mensagemOperador = processaMensagemTela(mensagem);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador,
+                                    tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayCustomerMessage:
                                 mensagemCliente = processaMensagemTela(mensagem);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente,
+                                    tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayMessage:
                                 mensagemOperador = processaMensagemTela(mensagem);
-                                mensagemCliente  = mensagemOperador;
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo   == 5005);
+                                mensagemCliente = mensagemOperador;
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador,
+                                    tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente,
+                                    tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayMenuHeader:
@@ -1499,7 +1536,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                             case CommandType.ClearMessage:
                                 mensagemOperador = string.Empty;
-                                mensagemCliente  = string.Empty;
+                                mensagemCliente = string.Empty;
                                 Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
                                 Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
                                 break;
@@ -1511,7 +1548,9 @@ namespace ACBr.Net.TEF.Gerenciadores
                             case CommandType.DisplayConfirm:
                                 if (mensagem.IsEmpty()) mensagem = "CONFIRMA ?";
 
-                                respostaSitef = Parent.DoExibeMsg(OperacaoMensagem.YesNo, mensagem) == ModalResult.Yes ? "0" : "1";
+                                respostaSitef = Parent.DoExibeMsg(OperacaoMensagem.YesNo, mensagem) == ModalResult.Yes
+                                    ? "0"
+                                    : "1";
                                 if (tipoCampo == 5013 && respostaSitef == "1")
                                     interromper = false;
                                 break;
@@ -1526,7 +1565,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 voltar = exibeMenuEventArgs.VoltarMenu;
                                 if (!voltar)
                                 {
-                                    if (exibeMenuEventArgs.ItemSelecionado >= 0 && exibeMenuEventArgs.ItemSelecionado < itens.Length)
+                                    if (exibeMenuEventArgs.ItemSelecionado >= 0 &&
+                                        exibeMenuEventArgs.ItemSelecionado < itens.Length)
                                         respostaSitef = itens[exibeMenuEventArgs.ItemSelecionado].Before(":");
                                     else
                                         digitado = false;
@@ -1551,16 +1591,18 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                             case CommandType.TextInputNeeded:
                                 Parent.BloquearMouseTeclado(false);
-                                var obterCampoTexto = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.String);
+                                var obterCampoTexto = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo,
+                                    tipoCampo, OperacaoCampo.String);
                                 OnObtemCampo.Raise(this, obterCampoTexto);
                                 respostaSitef = obterCampoTexto.Resposta;
-                                ((RetornoCliSiTef)Resposta).GravaInformacao(tipoCampo, respostaSitef);
+                                ((RetornoCliSiTef) Resposta).GravaInformacao(tipoCampo, respostaSitef);
                                 Parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.CheckInputNeeded:
                                 Parent.BloquearMouseTeclado(false);
-                                var obterCampoCheque = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.CMC7);
+                                var obterCampoCheque = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo,
+                                    tipoCampo, OperacaoCampo.CMC7);
                                 OnObtemCampo.Raise(this, obterCampoCheque);
                                 respostaSitef = obterCampoCheque.Resposta;
                                 Parent.BloquearMouseTeclado();
@@ -1568,7 +1610,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                             case CommandType.MoneyInputNeeded:
                                 Parent.BloquearMouseTeclado(false);
-                                var obterCampoDecimal = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.Double);
+                                var obterCampoDecimal = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo,
+                                    tipoCampo, OperacaoCampo.Double);
                                 OnObtemCampo.Raise(this, obterCampoDecimal);
                                 respostaSitef = obterCampoDecimal.Resposta;
                                 Parent.BloquearMouseTeclado();
@@ -1576,7 +1619,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                             case CommandType.BarcodeInputNeeded:
                                 Parent.BloquearMouseTeclado(false);
-                                var obterCampoBarcode = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.BarCode);
+                                var obterCampoBarcode = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo,
+                                    tipoCampo, OperacaoCampo.BarCode);
                                 OnObtemCampo.Raise(this, obterCampoBarcode);
                                 respostaSitef = obterCampoBarcode.Resposta;
                                 Parent.BloquearMouseTeclado();
@@ -1633,7 +1677,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                 ((RetornoCliSiTef) Resposta).ConteudoToProperty();
 
                 if (houveImpressao && cancelamento)
-                    Parent.DoExibeMsg(OperacaoMensagem.OK, CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(Resposta.NSU));
+                    Parent.DoExibeMsg(OperacaoMensagem.OK,
+                        CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(Resposta.NSU));
 
                 AguardandoResposta = false;
             }
@@ -1688,8 +1733,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                 default:
                     erro = sts < 0
-                               ? $"Erros detectados internamente pela rotina ({sts})"
-                               : $"Negada pelo autorizador ({sts})";
+                        ? $"Erros detectados internamente pela rotina ({sts})"
+                        : $"Negada pelo autorizador ({sts})";
                     break;
             }
 
@@ -1699,7 +1744,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
         private bool SuportaDesconto()
         {
-            return !Parent.Identificacao.SoftwareHouse.IsEmpty()                  &&
+            return !Parent.Identificacao.SoftwareHouse.IsEmpty() &&
                    Parent.EventAssigned(nameof(Parent.OnComandaVendaSubtotaliza)) &&
                    !Parent.AutoEfetuarPagamento;
         }
