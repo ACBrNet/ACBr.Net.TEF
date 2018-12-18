@@ -1164,70 +1164,62 @@ namespace ACBr.Net.TEF.Gerenciadores
 
         protected override bool ProcessarRespostaPagamento(string indicePagamento, decimal valor)
         {
+            this.Log().InfoFormat("{0} ProcessarRespostaPagamento: {1} Indice:{2} Valor: {3:c}", Name, Resposta.Header,
+                indicePagamento, valor);
+
+            //...Se está aqui, então a Transação foi aprovada...
+            Resposta.IndicePagamento = indicePagamento;
+
             // Cria Arquivo de Backup, contendo Todas as Respostas
             CopiarResposta();
 
             //Cria cópia do Objeto Resp, e salva no ObjectList "RespostasPendentes"
             var respostaPendete = Resposta.Clone();
-            respostaPendete.ArqRespPendente = ArqResp;
-            respostaPendete.ViaClienteReduzida = Parent.ImprimirViaClienteReduzida;
             Parent.RespostasPendentes.Add(respostaPendete);
 
-            var impressaoOk = true;
-            var tecladoEstavaLivre = true;
+            if (!Parent.AutoEfetuarPagamento) return true;
 
-            if (Parent.AutoEfetuarPagamento)
+            var impressaoOk = false;
+
+            try
             {
-                try
+                while (!impressaoOk)
                 {
                     try
                     {
-                        tecladoEstavaLivre = !Parent.TecladoBloqueado;
-                        Parent.BloquearMouseTeclado();
                         Parent.PagamentoVenda(indicePagamento, valor);
                         Parent.RespostasPendentes.SaldoAPagar = (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
-                        if (respostaPendete.Header == "CHQ" && Parent.ChqEmGerencial)
-                            respostaPendete.OrdemPagamento = 999;
-                        else
-                            respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
+                        respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
+                        impressaoOk = true;
                     }
                     catch (ACBrTEFPrintException)
                     {
                         impressaoOk = false;
                     }
-                    finally
-                    {
-                        if (tecladoEstavaLivre)
-                            Parent.BloquearMouseTeclado(false);
-                    }
 
-                    if (!impressaoOk)
+                    if (impressaoOk) continue;
+                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) == ModalResult.Yes) continue;
+
+                    try
                     {
-                        if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes)
-                        {
-                            try
-                            {
-                                Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
-                            }
-                            catch (Exception)
-                            {
-                                //
-                            }
-                        }
+                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
                     }
-                }
-                finally
-                {
-                    if (!impressaoOk) CancelarTransacoesPendentes();
+                    catch (Exception)
+                    {
+                        //Exceção Muda
+                        break;
+                    }
                 }
             }
+            finally
+            {
+                if (!impressaoOk) CancelarTransacoesPendentes();
+            }
 
-            if (!impressaoOk) return true;
+            if (Parent.RespostasPendentes.SaldoRestante > 0) return true;
+            if (!Parent.AutoFinalizarCupom) return true;
 
-            FinalizarResposta(false);
-
-            if (!Parent.AutoFinalizarCupom || Parent.RespostasPendentes.SaldoRestante > 0) return true;
-
+            //False não desbloqueia o MouseTeclado
             Parent.FinalizarCupom(false);
             Parent.ImprimirTransacoesPendentes();
             return true;
@@ -1332,7 +1324,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                     var voltar        = false;
                     var digitado      = true;
 
-                    this.Log().Info($"ContinuaFuncaoSiTefInterativo, Retornos: STS = {result} ProximoComando = {(int) proximoComando} " +
+                    this.Log().Info($"ContinuaFuncaoSiTefInterativo, Retornos: STS = {result} ProximoComando = {(int)proximoComando} " +
                                     $"TipoCampo = {tipoCampo} Buffer = {mensagem} Tam.Min = {tamanhoMinimo} Tam.Max = {tamanhoMaximo}");
 
                     if (result == 10000)

@@ -211,32 +211,32 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <param name="aHeader">a header.</param>
         /// <param name="aid">The aid.</param>
-        /// <exception cref="ACBrException">Requisição anterior não concluida</exception>
+        /// <exception cref="ACBrException">Requisiï¿½ï¿½o anterior nï¿½o concluida</exception>
         protected virtual void IniciarRequisicao(string aHeader, int aid = 0)
         {
-            Guard.Against<ACBrException>(AguardandoResposta, "Requisição anterior não concluida");
+            Guard.Against<ACBrException>(AguardandoResposta, "Requisiï¿½ï¿½o anterior nï¿½o concluida");
 
             this.Log().InfoFormat("{0} IniciarRequisicao: {1}", Name, aHeader);
 
-            // Verificando se a Classe de TEF está Inicializado
+            // Verificando se a Classe de TEF estï¿½ Inicializado
             VerificaInicializado();
 
-            // Transação a ser enviada é pagamento ? (CRT ou CHQ)
+            // Transaï¿½ï¿½o a ser enviada ï¿½ pagamento ? (CRT ou CHQ)
             if (TransacaoEPagamento(aHeader))
             {
                 //Para TEF DISCADO tradicional, se for MultiplosCartoes, precisa
-                //confirma a transação anterior antes de enviar uma nova
-                if (Parent.MultiplosCartoes) // É multiplos cartoes ?
+                //confirma a transaï¿½ï¿½o anterior antes de enviar uma nova
+                if (Parent.MultiplosCartoes) // ï¿½ multiplos cartoes ?
                     ConfirmarTransacoesAnteriores();
             }
 
-            //VisaNET exige um ATV antes de cada transação
+            //VisaNET exige um ATV antes de cada transaï¿½ï¿½o
             if (aHeader != "ATV")
                 VerificaAtivo();
 
             Parent.EstadoReq = ReqEstado.Iniciando;
 
-            //Limpando da Memória os dados do Objeto de Requisicao e Resposta
+            //Limpando da Memï¿½ria os dados do Objeto de Requisicao e Resposta
             Requisicao.Clear();
             Resposta.Clear();
 
@@ -305,7 +305,7 @@ namespace ACBr.Net.TEF
         /// Finalizars the requisicao.
         /// </summary>
         /// <exception cref="ACBrException">
-        /// Falha na comunicação com o Gereciador Padrão: + Name
+        /// Falha na comunicaï¿½ï¿½o com o Gereciador Padrï¿½o: + Name
         /// or
         /// </exception>
         protected virtual void FinalizarRequisicao()
@@ -362,7 +362,7 @@ namespace ACBr.Net.TEF
             }
 
             this.Log().InfoFormat("{0} FinalizarRequisicao: {1}, Fim da Espera de: {2} {3}", Name, Requisicao.Header,
-                                  File.Exists(ArqSTS) ? "Recebido" : "Não recebido");
+                                  File.Exists(ArqSTS) ? "Recebido" : "Nï¿½o recebido");
 
             Guard.Against<ACBrTEFGPNaoRespondeException>(!File.Exists(ArqSTS), ACBrTEF.CacbrTefdErroNaoAtivo, Name);
 
@@ -378,7 +378,7 @@ namespace ACBr.Net.TEF
                 ApagaEVerifica(ArqResp);
                 Requisicao.Clear();
                 Resposta.Clear();
-                throw new ACBrException("Falha na comunicação com o Gereciador Padrão:" + Name);
+                throw new ACBrException("Falha na comunicaï¿½ï¿½o com o Gereciador Padrï¿½o:" + Name);
             }
 
             Parent.EstadoReq = ReqEstado.Finalizada;
@@ -432,7 +432,7 @@ namespace ACBr.Net.TEF
 
                         do
                         {
-                            Thread.Sleep(Parent.EsperaSleep); // Necessário Para não sobrecarregar a CPU //
+                            Thread.Sleep(Parent.EsperaSleep); // Necessï¿½rio Para nï¿½o sobrecarregar a CPU //
                             if (!Parent.EventAssigned(nameof(Parent.OnAguardaResp))) continue;
 
                             var e = new AguardaRespEventArgs(ArqSTS, DateTime.Now.Subtract(tempoInicioEspera).Seconds);
@@ -441,7 +441,7 @@ namespace ACBr.Net.TEF
                         } while (!File.Exists(ArqResp) && !interromper);
 
                         this.Log().InfoFormat("{0} LerRespostaRequisicao: {1}, Fim da Espera de: {2}", Name, Requisicao.Header,
-                                              File.Exists(ArqResp) ? "Recebido" : "Não recebido");
+                                              File.Exists(ArqResp) ? "Recebido" : "Nï¿½o recebido");
                     }
                     finally
                     {
@@ -460,7 +460,7 @@ namespace ACBr.Net.TEF
 
                     if (!ok)
                     {
-                        this.Log().InfoFormat("{0} LerRespostaRequisicao: {1}, Arquivo inválido desprezado: {2}{3}{4}",
+                        this.Log().InfoFormat("{0} LerRespostaRequisicao: {1}, Arquivo invï¿½lido desprezado: {2}{3}{4}",
                                               Name, Requisicao.Header, ArqResp, Environment.NewLine, Resposta.Conteudo.Conteudo.AsString());
                         Resposta.Clear();
                         UtilTEF.DeleteFile(ArqResp);
@@ -566,13 +566,14 @@ namespace ACBr.Net.TEF
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         protected virtual bool ProcessarRespostaPagamento(string indicePagamento, decimal valor)
         {
-            //LerRespostaRequisicao();
-            this.Log().InfoFormat("{0} ProcessarRespostaPagamento: {1} Indice:{2} Valor: {3:c}", Name, Resposta.Header, indicePagamento, valor);
+            LerRespostaRequisicao();
+            this.Log().InfoFormat("{0} ProcessarRespostaPagamento: {1} Indice:{2} Valor: {3:c}", Name, Resposta.Header,
+                indicePagamento, valor);
 
             var ret             = Resposta.TransacaoAprovada;
             var ultimaTransacao = valor >= Parent.RespostasPendentes.SaldoRestante;
 
-            //Se a transação não foi aprovada, faz tratamento e sai
+            //Se a transaï¿½ï¿½o nï¿½o foi aprovada, faz tratamento e sai
             if (!Resposta.TransacaoAprovada)
             {
                 ProcessarResposta();     //Exibe a Mensagem ao Operador
@@ -580,7 +581,8 @@ namespace ACBr.Net.TEF
 
                 //Ja tem RespostasPendentes ?
                 if (!ultimaTransacao || Parent.RespostasPendentes.Count <= 0) return ret;
-                if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroOutraFormaPagamento) == ModalResult.Yes) return ret;
+                if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroOutraFormaPagamento) ==
+                    ModalResult.Yes) return ret;
 
                 Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
                 Parent.CancelarTransacoesPendentes();
@@ -588,27 +590,29 @@ namespace ACBr.Net.TEF
                 return ret;
             }
 
-            //...Se está aqui, então a Transação foi aprovada...
+            //...Se estï¿½ aqui, entï¿½o a Transaï¿½ï¿½o foi aprovada...
             Resposta.IndicePagamento = indicePagamento;
 
-            //Cria Arquivo de Backup, contendo inclusive informações internas como :
+            //Cria Arquivo de Backup, contendo inclusive informaï¿½ï¿½es internas como :
             //899 - 001 : CNFEnviado (S, N)
             //899 - 002 : IndiceFPG_ECF : String
             //899 - 003 : OrdemPagamento : Integer
             CopiarResposta();
 
-            //Cria cópia do Objeto Resp, e salva no ObjectList "RespostasPendentes"
+            //Cria cï¿½pia do Objeto Resp, e salva no ObjectList "RespostasPendentes"
             var respostaPendete = Resposta.Clone();
             respostaPendete.ArqRespPendente    = ArqResp;
             respostaPendete.ViaClienteReduzida = Parent.ImprimirViaClienteReduzida;
             Parent.RespostasPendentes.Add(respostaPendete);
 
-            var impressaoOk        = true;
+            if (!Parent.AutoEfetuarPagamento) return ret;
+
+            var impressaoOk = false;
             var tecladoEstavaLivre = true;
 
-            if (Parent.AutoEfetuarPagamento)
+            try
             {
-                try
+                while (!impressaoOk)
                 {
                     try
                     {
@@ -620,6 +624,8 @@ namespace ACBr.Net.TEF
                             respostaPendete.OrdemPagamento = 999;
                         else
                             respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
+
+                        impressaoOk = true;
                     }
                     catch (ACBrTEFPrintException)
                     {
@@ -631,32 +637,31 @@ namespace ACBr.Net.TEF
                             Parent.BloquearMouseTeclado(false);
                     }
 
-                    if (!impressaoOk)
+                    if (impressaoOk) continue;
+                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) == ModalResult.Yes) continue;
+
+                    try
                     {
-                        if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes)
-                        {
-                            try
-                            {
-                                Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
-                            }
-                            catch (Exception)
-                            {
-                                //
-                            }
-                        }
+                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                    }
+                    catch (Exception)
+                    {
+                        // Exceï¿½ï¿½o Muda
+                        break;
                     }
                 }
-                finally
-                {
-                    if (!impressaoOk) CancelarTransacoesPendentes();
-                }
+            }
+            finally
+            {
+                if (!impressaoOk) CancelarTransacoesPendentes();
             }
 
             if (!impressaoOk) return ret;
 
             FinalizarResposta(false);
 
-            if (!Parent.AutoFinalizarCupom || Parent.RespostasPendentes.SaldoRestante > 0) return ret;
+            if (Parent.RespostasPendentes.SaldoRestante > 0) return ret;
+            if (!Parent.AutoFinalizarCupom) return ret;
 
             Parent.FinalizarCupom(false);
             Parent.ImprimirTransacoesPendentes();
@@ -816,7 +821,7 @@ namespace ACBr.Net.TEF
                 Parent.BloquearMouseTeclado(false);
             }
 
-            Guard.Against<ACBrTEFPrintException>(!impressaoOk, "Impressão de Relatório Falhou");
+            Guard.Against<ACBrTEFPrintException>(!impressaoOk, "Impressï¿½o de Relatï¿½rio Falhou");
         }
 
         /// <summary>
@@ -879,9 +884,9 @@ namespace ACBr.Net.TEF
         protected virtual void VerificarTransacaoPagamento(decimal valor)
         {
             valor = valor.RoundABNT();
-            Guard.Against<ACBrException>(valor < 0, "Valor inválido");
+            Guard.Against<ACBrException>(valor < 0, "Valor invï¿½lido");
             Guard.Against<ACBrException>(!Estado.IsIn(EstadoVenda.Venda, EstadoVenda.Pagamento, EstadoVenda.NaoFiscal),
-                                         "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
+                                         "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Nï¿½o Fiscal\"");
 
             var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
             saldoAPagar                           -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
@@ -892,26 +897,26 @@ namespace ACBr.Net.TEF
             if (Parent.TrocoMaximo <= 0)
             {
                 Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante,
-                                             "Operação TEF deve ser limitada a Saldo restante a Pagar");
+                                             "Operaï¿½ï¿½o TEF deve ser limitada a Saldo restante a Pagar");
             }
             else
             {
                 Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante + Parent.TrocoMaximo,
-                                             "Operação TEF permite Troco Máximo de {0:c}", Parent.TrocoMaximo);
+                                             "Operaï¿½ï¿½o TEF permite Troco Mï¿½ximo de {0:c}", Parent.TrocoMaximo);
             }
 
             Guard.Against<ACBrException>(Parent.MultiplosCartoes && Parent.NumeroMaximoCartoes > 0 &&
                                          Parent.RespostasPendentes.Count                       >= Parent.NumeroMaximoCartoes,
-                                         "Multiplos Cartões Limitado a {0}", Parent.NumeroMaximoCartoes);
+                                         "Multiplos Cartï¿½es Limitado a {0}", Parent.NumeroMaximoCartoes);
             if (this is TEFTxt)
             {
                 // Tem multiplos Cartoes ?
-                // Valor é diferente do Saldo Restante a Pagar ?
-                // Está no último cartão ?
+                // Valor ï¿½ diferente do Saldo Restante a Pagar ?
+                // Estï¿½ no ï¿½ltimo cartï¿½o ?
                 Guard.Against<ACBrException>(Parent.MultiplosCartoes                            && Parent.NumeroMaximoCartoes > 0 &&
                                              (valor != Parent.RespostasPendentes.SaldoRestante) &&
                                              (Parent.NumeroMaximoCartoes - Parent.RespostasPendentes.Count) <= 1,
-                                             "Multiplos Cartões Limitado a {0}.{1}Esta Operação TEF deve ser igual ao Saldo a Pagar.",
+                                             "Multiplos Cartï¿½es Limitado a {0}.{1}Esta Operaï¿½ï¿½o TEF deve ser igual ao Saldo a Pagar.",
                                              Parent.NumeroMaximoCartoes, Environment.NewLine);
             }
         }
@@ -936,7 +941,7 @@ namespace ACBr.Net.TEF
         /// <exception cref="ACBrException"></exception>
         public void VerificaInicializado()
         {
-            Guard.Against<ACBrException>(!inicializado, "Gerenciador Padrão: {0} não foi inicializado", Name);
+            Guard.Against<ACBrException>(!inicializado, "Gerenciador Padrï¿½o: {0} nï¿½o foi inicializado", Name);
         }
 
         /// <summary>
@@ -954,14 +959,14 @@ namespace ACBr.Net.TEF
             inicializado = true;
             this.Log().InfoFormat("{0} Inicializado", Name);
 
-            // Verificando se o arquivo de Resposta é invalido ou seja, gerado quando
+            // Verificando se o arquivo de Resposta ï¿½ invalido ou seja, gerado quando
             //clica-se em 9 - CANCELAR sem selecionar nenhuma Bandeira }
             if (File.Exists(ArqResp))
             {
                 Resposta.LeArquivo(ArqResp);
                 var info = Resposta.LeInformacao(9).AsString().ToUpper();
 
-                // Amex retorna 101 e não FF
+                // Amex retorna 101 e nï¿½o FF
                 if ("|101|FF|".Contains(info))
                     ApagaEVerifica(ArqResp);
 
@@ -984,10 +989,10 @@ namespace ACBr.Net.TEF
         /// <summary>
         /// Ativars the gp.
         /// </summary>
-        /// <exception cref="ACBrException">Nome do executável do Gerenciador Padrão não definido</exception>
+        /// <exception cref="ACBrException">Nome do executï¿½vel do Gerenciador Padrï¿½o nï¿½o definido</exception>
         public virtual void AtivarGP()
         {
-            Guard.Against<ACBrException>(GPExeName.IsEmpty(), "Nome do executável do Gerenciador Padrão não definido");
+            Guard.Against<ACBrException>(GPExeName.IsEmpty(), "Nome do executï¿½vel do Gerenciador Padrï¿½o nï¿½o definido");
 
             VerificaInicializado();
 
@@ -1009,7 +1014,7 @@ namespace ACBr.Net.TEF
             {
                 if (AutoAtivarGp)
                 {
-                    const string msg = "O Gerenciador Padrão não está ativo e será ativado automaticamente!";
+                    const string msg = "O Gerenciador Padrï¿½o nï¿½o estï¿½ ativo e serï¿½ ativado automaticamente!";
                     Parent.DoExibeMsg(OperacaoMensagem.OK, msg);
                     AtivarGP();
                     ATV();
@@ -1039,15 +1044,15 @@ namespace ACBr.Net.TEF
             catch (Exception)
             {
                 estado = EstadoVenda.Outro;
-                // Se o ECF estiver desligado, será retornado 'EstadoVenda.Outro', o que fará o código
-                // abaixo Cancelar Todas as Transações Pendentes, porém, pelo Roteiro do
-                // TEF dedicado, é necessário confirmar a Transação se o Cupom foi
+                // Se o ECF estiver desligado, serï¿½ retornado 'EstadoVenda.Outro', o que farï¿½ o cï¿½digo
+                // abaixo Cancelar Todas as Transaï¿½ï¿½es Pendentes, porï¿½m, pelo Roteiro do
+                // TEF dedicado, ï¿½ necessï¿½rio confirmar a Transaï¿½ï¿½o se o Cupom foi
                 // finalizado com sucesso.
                 // Criar um arquivo de Status que seja atualizado no Fim do Cupom e no
-                // inicio do CCD, de maneira que seja possível identificar o Status do
-                // Documento no ECF indepentende do mesmo estar ou não ligado
-                // Como alteranativa, é possível implementar código no Evento "OnInfoVenda"
-                // para buscar o Status do Documento no Banco de dados da sua aplicação, e
+                // inicio do CCD, de maneira que seja possï¿½vel identificar o Status do
+                // Documento no ECF indepentende do mesmo estar ou nï¿½o ligado
+                // Como alteranativa, ï¿½ possï¿½vel implementar cï¿½digo no Evento "OnInfoVenda"
+                // para buscar o Status do Documento no Banco de dados da sua aplicaï¿½ï¿½o, e
                 // responder diferente de 'EstadoVenda.Outro',   (Veja exemplo nos fontes do TEFDDemo) }
             }
 
@@ -1067,7 +1072,7 @@ namespace ACBr.Net.TEF
         /// <exception cref="ACBrException">
         /// CNC nao efetuado
         /// or
-        /// Erro ao cancelar transações
+        /// Erro ao cancelar transaï¿½ï¿½es
         /// </exception>
         public virtual void CancelarTransacoesPendentes()
         {
@@ -1080,7 +1085,7 @@ namespace ACBr.Net.TEF
             var searchPattern = $"ACBr_{Name}_*.tef";
             arquivosVerificar.AddRange(Directory.GetFiles(Parent.PathBackup, searchPattern));
 
-            //Vamos processar primeiro os CNCs e ADMs, e as Não Confirmadas
+            //Vamos processar primeiro os CNCs e ADMs, e as Nï¿½o Confirmadas
             arquivosVerificar = arquivosVerificar.OrderBy(x =>
                                                           {
                                                               var resp = CriarResposta(Tipo);
@@ -1088,7 +1093,7 @@ namespace ACBr.Net.TEF
                                                               return resp.Header.IsIn("CNC", "ADM") || resp.CNFEnviado;
                                                           }).ToList();
 
-            //Adicionando Arquivo de Resposta deste GP (se ainda não foi apagado)
+            //Adicionando Arquivo de Resposta deste GP (se ainda nï¿½o foi apagado)
             if (File.Exists(ArqResp)) arquivosVerificar.Add(ArqResp);
 
             while (arquivosVerificar.Count > 0)
@@ -1101,7 +1106,7 @@ namespace ACBr.Net.TEF
 
                 Resposta.LeArquivo(arquivosVerificar[0]);
 
-                //Verificando se essa Resposta já foi cancela em outro arquivo
+                //Verificando se essa Resposta jï¿½ foi cancela em outro arquivo
                 var jaCancelado = respostasCanceladas.Exists(x => x.Rede        == Resposta.Rede        &&
                                                                   x.NSU         == Resposta.NSU         &&
                                                                   x.Finalizacao == Resposta.Finalizacao &&
@@ -1114,7 +1119,7 @@ namespace ACBr.Net.TEF
                     continue;
                 }
 
-                //Criando cópia da Resposta Atual
+                //Criando cï¿½pia da Resposta Atual
                 var respostaCancelada = Resposta.Clone();
 
                 //Enviando NCN ou CNC
@@ -1153,7 +1158,7 @@ namespace ACBr.Net.TEF
         {
             this.Log().Info("ConfirmarTransacoesAnteriores");
 
-            //Se for Multiplos Cartoes precisa confirmar a transação anterior antes de
+            //Se for Multiplos Cartoes precisa confirmar a transaï¿½ï¿½o anterior antes de
             //enviar uma Nova
 
             foreach (var pendente in Parent.RespostasPendentes
@@ -1193,7 +1198,7 @@ namespace ACBr.Net.TEF
 
             try
             {
-                ProcessarResposta(); //Faz a Impressão e / ou exibe Mensagem ao Operador
+                ProcessarResposta(); //Faz a Impressï¿½o e / ou exibe Mensagem ao Operador
             }
             finally
             {
@@ -1237,7 +1242,7 @@ namespace ACBr.Net.TEF
 
             try
             {
-                ProcessarResposta(); //Faz a Impressão e / ou exibe Mensagem ao Operador
+                ProcessarResposta(); //Faz a Impressï¿½o e / ou exibe Mensagem ao Operador
             }
             finally
             {
@@ -1296,7 +1301,7 @@ namespace ACBr.Net.TEF
             try
             {
                 if (Resposta.QtdLinhasComprovante <= 0 && Resposta.StatusTransacao == "0")
-                    ProcessarResposta(); //Faz a Impressão e/ou exibe Mensagem ao Operador
+                    ProcessarResposta(); //Faz a Impressï¿½o e/ou exibe Mensagem ao Operador
             }
             finally
             {
@@ -1340,7 +1345,7 @@ namespace ACBr.Net.TEF
 
             try
             {
-                ProcessarResposta(); //Faz a Impressão e/ou exibe Mensagem ao Operador
+                ProcessarResposta(); //Faz a Impressï¿½o e/ou exibe Mensagem ao Operador
             }
             finally
             {
@@ -1372,7 +1377,7 @@ namespace ACBr.Net.TEF
             var ret = Resposta.TransacaoAprovada;
             try
             {
-                ProcessarResposta(); //Faz a Impressão e/ou exibe Mensagem ao Operador
+                ProcessarResposta(); //Faz a Impressï¿½o e/ou exibe Mensagem ao Operador
             }
             finally
             {
@@ -1433,7 +1438,7 @@ namespace ACBr.Net.TEF
             FinalizarRequisicao();
 
             var msgStr = new StringBuilder();
-            msgStr.AppendLine("Última Transação TEF foi cancelada");
+            msgStr.AppendLine("ï¿½ltima Transaï¿½ï¿½o TEF foi cancelada");
             msgStr.AppendLine("");
             msgStr.AppendLine("");
 
