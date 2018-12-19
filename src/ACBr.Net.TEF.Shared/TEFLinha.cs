@@ -82,7 +82,7 @@ namespace ACBr.Net.TEF
 
                 linha = value;
 
-                var linhas = $"{linha} ".Split('=');
+                var linhas = linha.Split(new[] { " = " }, StringSplitOptions.None);
                 if (linha.IsEmpty() || linhas.Length == 0)
                 {
                     Informacao = string.Empty;

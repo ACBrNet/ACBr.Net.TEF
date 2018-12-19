@@ -889,6 +889,7 @@ namespace ACBr.Net.TEF
             var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
             saldoAPagar -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
             Parent.RespostasPendentes.SaldoAPagar = saldoAPagar;
+            Parent.RespostasPendentes.SaldoRestante = valor;
 
             if (Parent.TrocoMaximo <= 0)
             {
