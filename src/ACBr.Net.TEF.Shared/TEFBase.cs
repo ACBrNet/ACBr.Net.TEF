@@ -883,8 +883,8 @@ namespace ACBr.Net.TEF
         {
             valor = valor.RoundABNT();
             Guard.Against<ACBrException>(valor < 0, "Valor inválido");
-            Guard.Against<ACBrException>(!Estado.IsIn(EstadoVenda.Venda, EstadoVenda.Pagamento, EstadoVenda.NaoFiscal),
-                "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
+            Guard.Against<ACBrException>(!Estado.IsIn(EstadoVenda.Venda, EstadoVenda.Pagamento, EstadoVenda.NaoFiscal) &&
+                !Parent.IsDFe, "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
 
             var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
             saldoAPagar -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);

@@ -322,6 +322,9 @@ namespace ACBr.Net.TEF
         [Category("Geral")]
         public bool AutoFinalizarCupom { get; set; }
 
+        [Category("Geral")]
+        public bool IsDFe { get; set; }
+
         /// <summary>
         /// Gets the req.
         /// </summary>
@@ -816,7 +819,7 @@ namespace ACBr.Net.TEF
                                 funcLiberarVenda();
 
                                 gerencialAberto = false;
-                                for (int j = 0; j < RespostasPendentes.Count; j++)
+                                for (var j = 0; j < RespostasPendentes.Count; j++)
                                 {
                                     var pendente = RespostasPendentes[j];
                                     GpAtual = pendente.TipoGP;
@@ -834,15 +837,13 @@ namespace ACBr.Net.TEF
                                         if (pendente.TextoEspecialOperador.IsEmpty())
                                         {
                                             removerMsg = true;
-                                            DoExibeMsg(OperacaoMensagem.ExibirMsgOperador,
-                                                pendente.TextoEspecialOperador);
+                                            DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, pendente.TextoEspecialOperador);
                                         }
 
                                         if (pendente.TextoEspecialCliente.IsEmpty())
                                         {
                                             removerMsg = true;
-                                            DoExibeMsg(OperacaoMensagem.ExibirMsgCliente,
-                                                pendente.TextoEspecialCliente);
+                                            DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, pendente.TextoEspecialCliente);
                                         }
                                     }
                                     else
@@ -913,7 +914,7 @@ namespace ACBr.Net.TEF
                                     if (pagamento.OrdemPagamento >= 999)
                                         gerencial = true;
 
-                                    for (int j = 0; j < RespostasPendentes.Count - 1; j++)
+                                    for (var j = 0; j < RespostasPendentes.Count - 1; j++)
                                     {
                                         var pendente = RespostasPendentes[j];
                                         if (pagamento.OrdemPagamento != pendente.OrdemPagamento)
@@ -934,15 +935,13 @@ namespace ACBr.Net.TEF
                                             if (pendente.TextoEspecialOperador.IsEmpty())
                                             {
                                                 removerMsg = true;
-                                                DoExibeMsg(OperacaoMensagem.ExibirMsgOperador,
-                                                    pendente.TextoEspecialOperador);
+                                                DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, pendente.TextoEspecialOperador);
                                             }
 
                                             if (pendente.TextoEspecialCliente.IsEmpty())
                                             {
                                                 removerMsg = true;
-                                                DoExibeMsg(OperacaoMensagem.ExibirMsgCliente,
-                                                    pendente.TextoEspecialCliente);
+                                                DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, pendente.TextoEspecialCliente);
                                             }
                                         }
                                         else
@@ -1418,6 +1417,8 @@ namespace ACBr.Net.TEF
 
         internal EstadoVenda DoEstadoVenda()
         {
+            if (IsDFe) return EstadoVenda.Livre;
+
             var e = new InfoVendaEventArgs(InfoVenda.EstadoVenda);
             DoOnInfoVenda(e);
 
