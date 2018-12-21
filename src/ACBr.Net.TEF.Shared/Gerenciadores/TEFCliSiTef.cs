@@ -1386,29 +1386,24 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                                 switch (estado)
                                                                 {
                                                                     case EstadoVenda.CupomVinculado:
-                                                                        Parent.DoComandaVenda(OperacaoVenda
-                                                                            .FechaVinculado);
+                                                                        Parent.DoComandaVenda(OperacaoVenda.FechaVinculado);
                                                                         break;
 
                                                                     case EstadoVenda.RelatorioGerencial:
-                                                                        Parent.DoComandaVenda(OperacaoVenda
-                                                                            .FechaGerencial);
+                                                                        Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
                                                                         break;
 
                                                                     case EstadoVenda.Venda:
                                                                     case EstadoVenda.Pagamento:
                                                                     case EstadoVenda.NaoFiscal:
-                                                                        Parent.DoComandaVenda(
-                                                                            OperacaoVenda.CancelaCupom);
+                                                                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
                                                                         break;
                                                                 }
 
                                                                 gerencialAberto = false;
                                                                 fechaGerencialAberto = false;
 
-                                                                Guard.Against<ACBrTEFPrintException>(
-                                                                    Estado != EstadoVenda.Livre,
-                                                                    ACBrTEF.CacbrTefdErroEcfNaoLivre);
+                                                                Guard.Against<ACBrTEFPrintException>(Estado != EstadoVenda.Livre, ACBrTEF.CacbrTefdErroEcfNaoLivre);
                                                             }
 
                                                             mensagem = Resposta.LeInformacao(i).AsString();
@@ -1422,8 +1417,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                                 else
                                                                 {
                                                                     Parent.DoComandaVenda(OperacaoVenda.PulaLinhas);
-                                                                    Parent.DoExibeMsg(OperacaoMensagem.DestaqueVia,
-                                                                        ACBrTEF.CacbrTefdDestaqueVia.Substitute(1));
+                                                                    Parent.DoExibeMsg(OperacaoMensagem.DestaqueVia, ACBrTEF.CacbrTefdDestaqueVia.Substitute(1));
                                                                 }
 
                                                                 Parent.DoVendaImprimeVia(TipoRelatorio.Gerencial,
@@ -1446,9 +1440,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                     }
 
                                                     if (impressaoOk) continue;
-                                                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo,
-                                                            ACBrTEF.CacbrTefdErroEcfNaoResponde) !=
-                                                        ModalResult.Yes) break;
+                                                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes) break;
 
                                                     i = 121;
                                                     fechaGerencialAberto = true;
@@ -1460,7 +1452,6 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                     continua = -1;
                                             }
                                         }
-
                                         break;
 
                                     case 133:
@@ -1468,28 +1459,23 @@ namespace ACBr.Net.TEF.Gerenciadores
                                         arqBackUp = CopiarResposta();
                                         break;
                                 }
-
                                 break;
 
                             case CommandType.DisplayOperatorMessage:
                                 mensagemOperador = processaMensagemTela(mensagem);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador,
-                                    tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayCustomerMessage:
                                 mensagemCliente = processaMensagemTela(mensagem);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente,
-                                    tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayMessage:
                                 mensagemOperador = processaMensagemTela(mensagem);
                                 mensagemCliente = mensagemOperador;
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador,
-                                    tipoCampo == 5005);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente,
-                                    tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
+                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayMenuHeader:
@@ -1497,18 +1483,14 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 break;
 
                             case CommandType.ClearOperatorMessage:
-                                mensagemOperador = string.Empty;
                                 Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
                                 break;
 
                             case CommandType.ClearCustomerMessage:
-                                mensagemCliente = string.Empty;
                                 Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
                                 break;
 
                             case CommandType.ClearMessage:
-                                mensagemOperador = string.Empty;
-                                mensagemCliente = string.Empty;
                                 Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
                                 Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
                                 break;
@@ -1522,8 +1504,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                     mensagem = "CONFIRMA ?";
 
                                 respostaSitef = Parent.DoExibeMsg(OperacaoMensagem.YesNo, mensagem) == ModalResult.Yes ? "0" : "1";
-                                if (tipoCampo == 5013 && respostaSitef == "1")
-                                    interromper = false;
+                                if (tipoCampo == 5013 && respostaSitef == "1") interromper = false;
                                 break;
 
                             case CommandType.DisplayMenuOptions:
@@ -1599,10 +1580,8 @@ namespace ACBr.Net.TEF.Gerenciadores
                         this.Log().Info($"*** ContinuaFuncaoSiTefInterativo, Finalizando: STS = {result}");
                     }
 
-                    if (voltar)
-                        continua = 1;
-                    else if (!digitado || interromper)
-                        continua = -1;
+                    if (voltar) continua = 1;
+                    else if (!digitado || interromper) continua = -1;
 
                     if (voltar && result == 10000 || !digitado)
                     {
@@ -1644,8 +1623,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                 Resposta.ConteudoToProperty();
 
                 if (houveImpressao && cancelamento)
-                    Parent.DoExibeMsg(OperacaoMensagem.OK,
-                        CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(Resposta.NSU));
+                    Parent.DoExibeMsg(OperacaoMensagem.OK, CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(Resposta.NSU));
 
                 AguardandoResposta = false;
             }

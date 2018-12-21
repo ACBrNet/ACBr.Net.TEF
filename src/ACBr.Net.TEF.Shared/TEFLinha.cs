@@ -37,7 +37,7 @@ using System.Globalization;
 namespace ACBr.Net.TEF
 {
     /// <summary>
-    /// Classe TEFLinha. Está classe não pode ser herdada.
+    /// Classe TEFLinha. Estï¿½ classe nï¿½o pode ser herdada.
     /// </summary>
     public sealed class TEFLinha : GenericClone<TEFLinha>
     {
@@ -80,7 +80,6 @@ namespace ACBr.Net.TEF
                 linha = value;
 
                 var linhas = linha.Split(new[] { " = " }, StringSplitOptions.None);
-
                 if (linha.IsEmpty() || linhas.Length == 0)
                 {
                     Informacao = string.Empty;
