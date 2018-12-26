@@ -33,6 +33,7 @@ using ACBr.Net.Core;
 using ACBr.Net.Core.Exceptions;
 using ACBr.Net.Core.Extensions;
 using ACBr.Net.Core.Logging;
+using ACBr.Net.TEF.Events;
 using ACBr.Net.TEF.Gerenciadores;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using ACBr.Net.TEF.Events;
 
 namespace ACBr.Net.TEF
 {
@@ -276,6 +276,9 @@ namespace ACBr.Net.TEF
         public bool ConfirmarAntesDosComprovantes { get; set; }
 
         [Category("Geral")]
+        public bool ConfirmarDepoisDosComprovantes { get; set; }
+
+        [Category("Geral")]
         public bool ImprimirViaClienteReduzida { get; set; }
 
         /// <summary>
@@ -337,11 +340,9 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The estado req.</value>
         [Category("Geral")]
-        public ReqEstado EstadoReq
-        {
+        public ReqEstado EstadoReq {
             get => estadoReq;
-            set
-            {
+            set {
                 estadoReq = value;
                 OnMudaEstadoReq.Raise(this, new MudaEstadoReqEventArgs(value));
             }
@@ -359,11 +360,9 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The estado resp.</value>
         [Category("Geral")]
-        public RespEstado EstadoResp
-        {
+        public RespEstado EstadoResp {
             get => estadoResp;
-            set
-            {
+            set {
                 estadoResp = value;
                 OnMudaEstadoResp.Raise(this, new MudaEstadoRespEventArgs(value));
             }
@@ -398,11 +397,9 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The gp atual.</value>
         [Browsable(false)]
-        public TEFTipo GpAtual
-        {
+        public TEFTipo GpAtual {
             get => gpAtual;
-            set
-            {
+            set {
                 if (gpAtual == value)
                     return;
 
@@ -437,13 +434,17 @@ namespace ACBr.Net.TEF
         /// Initializars the specified gp.
         /// </summary>
         /// <param name="gp">The gp.</param>
-        public void Initializar(TEFTipo gp = TEFTipo.Nenhum)
+        public void Inicializar(TEFTipo gp = TEFTipo.Nenhum)
         {
             Guard.Against<ACBrException>(OnExibeMensagem == null, "Evento [OnExibeMsg] não programado");
-            Guard.Against<ACBrException>(OnComandaVenda == null, "Evento [OnComandaECF] não programado");
-            Guard.Against<ACBrException>(OnComandaVendaAbreVinculado == null, "Evento [OnComandaECFAbreVinculado] não programado");
             Guard.Against<ACBrException>(OnComandaVendaImprimeVia == null, "Evento [OnComandaECFImprimeVia] não programado");
-            Guard.Against<ACBrException>(OnInfoVenda == null, "Evento [OnInfoECF] não programado");
+
+            if (!IsDFe)
+            {
+                Guard.Against<ACBrException>(OnComandaVenda == null, "Evento [OnComandaECF] não programado");
+                Guard.Against<ACBrException>(OnComandaVendaAbreVinculado == null, "Evento [OnComandaECFAbreVinculado] não programado");
+                Guard.Against<ACBrException>(OnInfoVenda == null, "Evento [OnInfoECF] não programado");
+            }
 
             if (!Directory.Exists(PathBackup))
             {
@@ -908,13 +909,13 @@ namespace ACBr.Net.TEF
                             {
                                 var ordem = -1;
                                 var pagamentos = RespostasPendentes.OrderedAndGrouped;
-                                for (var k = 0; k < pagamentos.Length - 1; k++)
+                                for (var k = 0; k < pagamentos.Length; k++)
                                 {
                                     var pagamento = pagamentos[k];
                                     if (pagamento.OrdemPagamento >= 999)
                                         gerencial = true;
 
-                                    for (var j = 0; j < RespostasPendentes.Count - 1; j++)
+                                    for (var j = 0; j < RespostasPendentes.Count; j++)
                                     {
                                         var pendente = RespostasPendentes[j];
                                         if (pagamento.OrdemPagamento != pendente.OrdemPagamento)
@@ -1045,7 +1046,7 @@ namespace ACBr.Net.TEF
             }
             finally
             {
-                if (!ConfirmarAntesDosComprovantes || !impressaoOk)
+                if (ConfirmarAntesDosComprovantes || !impressaoOk)
                 {
                     try
                     {
@@ -1060,7 +1061,7 @@ namespace ACBr.Net.TEF
                 }
                 else
                 {
-                    ConfirmarTransacoesPendentes();
+                    if (ConfirmarDepoisDosComprovantes) ConfirmarTransacoesPendentes();
                 }
 
                 BloquearMouseTeclado(false);
@@ -1068,7 +1069,7 @@ namespace ACBr.Net.TEF
                     DoExibeMsg(OperacaoMensagem.OK, msgAutenticacaoAExibir);
             }
 
-            RespostasPendentes.Clear();
+            if (ConfirmarAntesDosComprovantes | ConfirmarDepoisDosComprovantes) RespostasPendentes.Clear();
         }
 
         /// <summary>
@@ -1509,6 +1510,8 @@ namespace ACBr.Net.TEF
 
         internal void DoVendaAbreVinculado(string documentoVinculado, string indicePagamento, decimal valor)
         {
+            if (IsDFe) return;
+
             Guard.Against<ACBrTEFPrintException>(OnComandaVendaAbreVinculado == null, "Evento [OnComandaECFAbreVinculado] não programado");
 
             try
@@ -1524,6 +1527,8 @@ namespace ACBr.Net.TEF
 
         internal void DoComandaVenda(OperacaoVenda operacao)
         {
+            if (IsDFe) return;
+
             Guard.Against<NullReferenceException>(OnComandaVenda == null, "Evento [OnComandaECF] não programado");
 
             this.Log().InfoFormat("{0} ComandaECF: Oper: {1}", selectedTEF.Name, operacao);

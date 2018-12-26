@@ -29,6 +29,12 @@
 // <summary></summary>
 // ***********************************************************************
 
+using ACBr.Net.Core;
+using ACBr.Net.Core.Exceptions;
+using ACBr.Net.Core.Extensions;
+using ACBr.Net.Core.Logging;
+using ACBr.Net.TEF.Events;
+using ACBr.Net.TEF.Gerenciadores;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,12 +42,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ACBr.Net.Core;
-using ACBr.Net.Core.Exceptions;
-using ACBr.Net.Core.Extensions;
-using ACBr.Net.Core.Logging;
-using ACBr.Net.TEF.Events;
-using ACBr.Net.TEF.Gerenciadores;
 
 namespace ACBr.Net.TEF
 {
@@ -186,11 +186,9 @@ namespace ACBr.Net.TEF
         /// Gets or sets a value indicating whether this <see cref="TEFBase"/> is inicializado.
         /// </summary>
         /// <value><c>true</c> if inicializado; otherwise, <c>false</c>.</value>
-        public bool Inicializado
-        {
+        public bool Inicializado {
             get => inicializado;
-            set
-            {
+            set {
                 if (value)
                     Inicializar();
                 else
@@ -676,7 +674,7 @@ namespace ACBr.Net.TEF
         }
 
         /// <summary>
-        /// Imprimirs the relatorio.
+        /// Imprimir o relatorio.
         /// </summary>
         protected virtual void ImprimirRelatorio()
         {
@@ -883,23 +881,29 @@ namespace ACBr.Net.TEF
         {
             valor = valor.RoundABNT();
             Guard.Against<ACBrException>(valor < 0, "Valor inválido");
-            Guard.Against<ACBrException>(!Estado.IsIn(EstadoVenda.Venda, EstadoVenda.Pagamento, EstadoVenda.NaoFiscal) &&
-                !Parent.IsDFe, "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
 
-            var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
-            saldoAPagar -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
-            Parent.RespostasPendentes.SaldoAPagar = saldoAPagar;
-            Parent.RespostasPendentes.SaldoRestante = valor;
+            if (!Parent.IsDFe)
+            {
+                Guard.Against<ACBrException>(!Estado.IsIn(EstadoVenda.Venda, EstadoVenda.Pagamento, EstadoVenda.NaoFiscal) &&
+                                             !Parent.IsDFe, "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
 
-            if (Parent.TrocoMaximo <= 0)
-            {
-                Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante,
-                    "Operação TEF deve ser limitada a Saldo restante a Pagar");
-            }
-            else
-            {
-                Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante + Parent.TrocoMaximo,
-                    "Operação TEF permite Troco Máximo de {0:c}", Parent.TrocoMaximo);
+                var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
+                saldoAPagar -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
+                Parent.RespostasPendentes.SaldoAPagar = saldoAPagar;
+                Parent.RespostasPendentes.SaldoRestante = valor;
+
+                Parent.RespostasPendentes.SaldoRestante = valor;
+
+                if (Parent.TrocoMaximo <= 0)
+                {
+                    Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante,
+                        "Operação TEF deve ser limitada a Saldo restante a Pagar");
+                }
+                else
+                {
+                    Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante + Parent.TrocoMaximo,
+                        "Operação TEF permite Troco Máximo de {0:c}", Parent.TrocoMaximo);
+                }
             }
 
             Guard.Against<ACBrException>(Parent.MultiplosCartoes && Parent.NumeroMaximoCartoes > 0 &&
@@ -911,8 +915,8 @@ namespace ACBr.Net.TEF
                 // Valor é diferente do Saldo Restante a Pagar ?
                 // Está no último cartão ?
                 Guard.Against<ACBrException>(Parent.MultiplosCartoes && Parent.NumeroMaximoCartoes > 0 &&
-                                            (valor != Parent.RespostasPendentes.SaldoRestante) &&
-                                            (Parent.NumeroMaximoCartoes - Parent.RespostasPendentes.Count) <= 1,
+                                            valor != Parent.RespostasPendentes.SaldoRestante &&
+                                            Parent.NumeroMaximoCartoes - Parent.RespostasPendentes.Count <= 1,
                     "Multiplos Cartões Limitado a {0}.{1}Esta Operação TEF deve ser igual ao Saldo a Pagar.",
                     Parent.NumeroMaximoCartoes, Environment.NewLine);
             }

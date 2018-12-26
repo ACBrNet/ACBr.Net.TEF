@@ -29,8 +29,8 @@
 // <summary></summary>
 // ***********************************************************************
 
-using System;
 using ACBr.Net.Core.Extensions;
+using System;
 
 namespace ACBr.Net.TEF
 {

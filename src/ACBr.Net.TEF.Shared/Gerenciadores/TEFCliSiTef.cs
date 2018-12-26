@@ -25,6 +25,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ACBr.Net.Core;
+using ACBr.Net.Core.Exceptions;
+using ACBr.Net.Core.Extensions;
+using ACBr.Net.Core.InteropServices;
+using ACBr.Net.Core.Logging;
+using ACBr.Net.TEF.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,12 +39,6 @@ using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using ACBr.Net.Core;
-using ACBr.Net.Core.Exceptions;
-using ACBr.Net.Core.Extensions;
-using ACBr.Net.Core.InteropServices;
-using ACBr.Net.Core.Logging;
-using ACBr.Net.TEF.Events;
 
 namespace ACBr.Net.TEF.Gerenciadores
 {
@@ -724,14 +724,12 @@ namespace ACBr.Net.TEF.Gerenciadores
 
         public Dictionary<string, string> ParametrosAdicionais { get; }
 
-        public string DocumentoFiscal
-        {
+        public string DocumentoFiscal {
             get => documentoFiscal.IsEmpty() ? DateTime.Now.ToString("hhmmss") : documentoFiscal;
             set => documentoFiscal = value;
         }
 
-        public DateTime DataHoraFiscal
-        {
+        public DateTime DataHoraFiscal {
             get => dataHoraFiscal ?? DateTime.Now;
             set => dataHoraFiscal = value;
         }
@@ -888,14 +886,14 @@ namespace ACBr.Net.TEF.Gerenciadores
             if (valor != 0)
                 VerificarTransacaoPagamento(valor);
 
-            var retri = Restricoes;
-            if (retri.IsEmpty())
-                retri = "[10]"; // 10 - Cheques
+            var restri = Restricoes;
+            if (restri.IsEmpty())
+                restri = "[10]"; // 10 - Cheques
 
             if (documentoVinculado.IsEmpty())
                 documentoVinculado = DocumentoFiscal;
 
-            var sts = FazerRequisicao(OperacaoCRT, "CRT", valor, documentoVinculado, retri);
+            var sts = FazerRequisicao(OperacaoCRT, "CRT", valor, documentoVinculado, restri);
 
             if (sts == 10000)
                 sts = ContinuarRequisicao(CacbrTefdCliSiTefImprimeGerencialConcomitante);
@@ -1256,7 +1254,7 @@ namespace ACBr.Net.TEF.Gerenciadores
             var dataHora = DataHoraFiscal;
             var dataStr = dataHora.ToString("yyyyMMdd");
             var horaStr = dataHora.ToString("HHmmss");
-            var valorStr = valor.ToString(CultureInfo.GetCultureInfo("pt-BR"));
+            var valorStr = valor.ToString("N2");
             documentosProcessados = string.Empty;
 
             this.Log().Info($"*** IniciaFuncaoSiTefInterativo. Modalidade: {funcao} Valor: {valorStr} " +
