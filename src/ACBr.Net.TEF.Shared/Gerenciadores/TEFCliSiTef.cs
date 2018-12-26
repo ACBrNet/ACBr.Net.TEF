@@ -886,14 +886,14 @@ namespace ACBr.Net.TEF.Gerenciadores
             if (valor != 0)
                 VerificarTransacaoPagamento(valor);
 
-            var retri = Restricoes;
-            if (retri.IsEmpty())
-                retri = "[10]"; // 10 - Cheques
+            var restri = Restricoes;
+            if (restri.IsEmpty())
+                restri = "[10]"; // 10 - Cheques
 
             if (documentoVinculado.IsEmpty())
                 documentoVinculado = DocumentoFiscal;
 
-            var sts = FazerRequisicao(OperacaoCRT, "CRT", valor, documentoVinculado, retri);
+            var sts = FazerRequisicao(OperacaoCRT, "CRT", valor, documentoVinculado, restri);
 
             if (sts == 10000)
                 sts = ContinuarRequisicao(CacbrTefdCliSiTefImprimeGerencialConcomitante);
@@ -1254,7 +1254,7 @@ namespace ACBr.Net.TEF.Gerenciadores
             var dataHora = DataHoraFiscal;
             var dataStr = dataHora.ToString("yyyyMMdd");
             var horaStr = dataHora.ToString("HHmmss");
-            var valorStr = valor.ToString(CultureInfo.GetCultureInfo("pt-BR"));
+            var valorStr = valor.ToString("N2");
             documentosProcessados = string.Empty;
 
             this.Log().Info($"*** IniciaFuncaoSiTefInterativo. Modalidade: {funcao} Valor: {valorStr} " +
