@@ -89,7 +89,7 @@ namespace ACBr.Net.TEF.Demo
 
         private void btnInicializar_Click(object sender, EventArgs e)
         {
-            tef.Initializar(TEFTipo.TEFDial);
+            tef.Inicializar(TEFTipo.TEFDial);
         }
 
         private void btnATV_Click(object sender, EventArgs e)

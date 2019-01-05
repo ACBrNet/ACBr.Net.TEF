@@ -52,10 +52,10 @@ namespace ACBr.Net.TEF
     {
         #region Fields
 
-        protected ACBrTEF Parent;
+        protected ACBrTEF parent;
         protected bool inicializado;
-        protected int IdSeq;
-        protected bool SalvarArquivoBackup;
+        protected int idSeq;
+        protected bool salvarArquivoBackup;
 
         #endregion Fields
 
@@ -67,25 +67,25 @@ namespace ACBr.Net.TEF
         /// <param name="parent">The parent.</param>
         protected TEFBase(ACBrTEF parent, TEFTipo tipo)
         {
-            Parent = parent;
+            this.parent = parent;
             AutoAtivarGp = true;
             ArqReq = string.Empty;
             ArqTemp = string.Empty;
             ArqResp = string.Empty;
             ArqSTS = string.Empty;
             Tipo = tipo;
-            IdSeq = (int)DateTime.Now.TimeOfDay.TotalSeconds;
+            idSeq = (int)DateTime.Now.TimeOfDay.TotalSeconds;
             EsperaSts = ACBrTEF.CacbrTefdEsperaSts;
             NumVias = ACBrTEF.CacbrTefdNumVias;
 
             AguardandoResposta = false;
-            SalvarArquivoBackup = true;
+            salvarArquivoBackup = true;
 
             Resposta = CriarResposta(Tipo);
             Requisicao = new RequisicaoTEF();
 
-            Parent.EstadoReq = ReqEstado.Nenhum;
-            Parent.EstadoResp = RespEstado.Nenhum;
+            this.parent.EstadoReq = ReqEstado.Nenhum;
+            this.parent.EstadoResp = RespEstado.Nenhum;
         }
 
         #endregion Constructor
@@ -156,13 +156,17 @@ namespace ACBr.Net.TEF
         /// Gets the estado ecf.
         /// </summary>
         /// <value>The estado ecf.</value>
-        public EstadoVenda Estado => Parent.DoEstadoVenda();
+        public EstadoVenda Estado => parent.DoEstadoVenda();
 
         /// <summary>
         /// Gets or sets the number vias.
         /// </summary>
         /// <value>The number vias.</value>
-        public int NumVias { get; set; }
+        public int NumVias
+        {
+            get => parent.NumVias;
+            protected set => parent.NumVias = value;
+        }
 
         /// <summary>
         /// Gets the req.
@@ -174,7 +178,11 @@ namespace ACBr.Net.TEF
         /// Gets the resp.
         /// </summary>
         /// <value>The resp.</value>
-        public RetornoTEF Resposta { get; protected set; }
+        public RetornoTEF Resposta
+        {
+            get => parent.Resposta;
+            protected set => parent.Resposta = value;
+        }
 
         /// <summary>
         /// Gets a value indicating whether [aguardando resposta].
@@ -186,9 +194,11 @@ namespace ACBr.Net.TEF
         /// Gets or sets a value indicating whether this <see cref="TEFBase"/> is inicializado.
         /// </summary>
         /// <value><c>true</c> if inicializado; otherwise, <c>false</c>.</value>
-        public bool Inicializado {
+        public bool Inicializado
+        {
             get => inicializado;
-            set {
+            set
+            {
                 if (value)
                     Inicializar();
                 else
@@ -222,7 +232,7 @@ namespace ACBr.Net.TEF
             {
                 //Para TEF DISCADO tradicional, se for MultiplosCartoes, precisa
                 //confirma a transação anterior antes de enviar uma nova
-                if (Parent.MultiplosCartoes)    // É multiplos cartoes ?
+                if (parent.MultiplosCartoes)    // É multiplos cartoes ?
                     ConfirmarTransacoesAnteriores();
             }
 
@@ -230,7 +240,7 @@ namespace ACBr.Net.TEF
             if (aHeader != "ATV")
                 VerificaAtivo();
 
-            Parent.EstadoReq = ReqEstado.Iniciando;
+            parent.EstadoReq = ReqEstado.Iniciando;
 
             //Limpando da Memória os dados do Objeto de Requisicao e Resposta
             Requisicao.Clear();
@@ -242,12 +252,12 @@ namespace ACBr.Net.TEF
             ApagaEVerifica(ArqSTS);  // Apagando Arquivo de Status anterior //
 
             if (aid > 0)
-                IdSeq = aid;
+                idSeq = aid;
             else
-                IdSeq++;
+                idSeq++;
 
             Requisicao.Header = aHeader;
-            Requisicao.Id = IdSeq;
+            Requisicao.Id = idSeq;
             Requisicao.Conteudo.GravarArquivo(ArqTemp);
         }
 
@@ -258,40 +268,30 @@ namespace ACBr.Net.TEF
         {
             var temIdentificacao = false;
 
-            var identificacao = $"{Parent.Identificacao.NomeAplicacao} {Parent.Identificacao.VersaoAplicacao}".Trim();
+            var identificacao = $"{parent.Identificacao.NomeAplicacao} {parent.Identificacao.VersaoAplicacao}".Trim();
             if (!identificacao.IsEmpty())
             {
                 Requisicao.GravarInformacao(identificacao, 701);
                 temIdentificacao = true;
             }
 
-            if (!Parent.Identificacao.RegistroCertificacao.IsEmpty())
+            if (!parent.Identificacao.RegistroCertificacao.IsEmpty())
             {
-                Requisicao.GravarInformacao(Parent.Identificacao.RegistroCertificacao, 738);
+                Requisicao.GravarInformacao(parent.Identificacao.RegistroCertificacao, 738);
                 temIdentificacao = true;
             }
 
-            if (!Parent.Identificacao.RazaoSocial.IsEmpty())
+            if (!parent.Identificacao.RazaoSocial.IsEmpty())
             {
-                Requisicao.GravarInformacao(Parent.Identificacao.RazaoSocial, 716);
+                Requisicao.GravarInformacao(parent.Identificacao.RazaoSocial, 716);
                 temIdentificacao = true;
             }
 
             var operacoes = 0;
 
-            if (Parent.AutoEfetuarPagamento)
-            {
-                if (Parent.SuportaSaque && !Parent.SuportaDesconto)
-                    operacoes = 1;
-                else if (!Parent.SuportaSaque && Parent.SuportaDesconto)
-                    operacoes = 2;
-            }
-            else
-            {
-                if (Parent.SuportaSaque) operacoes += 1;
-                if (Parent.SuportaDesconto) operacoes += 2;
-                if (Parent.SuportaReajusteValor) operacoes += 3;
-            }
+            if (parent.SuportaSaque) operacoes += 1;
+            if (parent.SuportaDesconto) operacoes += 2;
+            if (parent.SuportaReajusteValor) operacoes += 3;
 
             if (temIdentificacao && operacoes > 0)
                 Requisicao.GravarInformacao(operacoes.ToString(), 706);
@@ -307,8 +307,8 @@ namespace ACBr.Net.TEF
         protected virtual void FinalizarRequisicao()
         {
             VerificarIniciouRequisicao();
-            Parent.EstadoReq = ReqEstado.CriandoArquivo;
-            Parent.DoOnAntesFinalizarRequisicao();
+            parent.EstadoReq = ReqEstado.CriandoArquivo;
+            parent.DoOnAntesFinalizarRequisicao();
 
             this.Log().InfoFormat("{0} FinalizarRequisicao: {1}, Fechando arquivo: {2}", Name, Requisicao.Header, ArqTemp);
 
@@ -332,18 +332,18 @@ namespace ACBr.Net.TEF
                 throw new ACBrException(msg, ex);
             }
 
-            Parent.EstadoReq = ReqEstado.AguardandoResposta;
-            var tempoFimEspera = DateTime.Now.AddSeconds(Parent.EsperaSts);
+            parent.EstadoReq = ReqEstado.AguardandoResposta;
+            var tempoFimEspera = DateTime.Now.AddSeconds(parent.EsperaSts);
             var interromper = false;
             AguardandoResposta = true;
             try
             {
-                this.Log().InfoFormat("{0} FinalizarRequisicao: {1}, Aguardando: {2}", Name, Requisicao.Header, Parent.EsperaSts);
+                this.Log().InfoFormat("{0} FinalizarRequisicao: {1}, Aguardando: {2}", Name, Requisicao.Header, parent.EsperaSts);
                 do
                 {
-                    Thread.Sleep(Parent.EsperaSleep);
+                    Thread.Sleep(parent.EsperaSleep);
                     var e = new AguardaRespEventArgs(ArqSTS, DateTime.Now.Subtract(tempoFimEspera).Seconds);
-                    Parent.DoOnAguardaResp(e);
+                    parent.DoOnAguardaResp(e);
                     interromper = e.Interromper;
                 } while (!File.Exists(ArqSTS) && DateTime.Now > tempoFimEspera && !interromper);
             }
@@ -354,7 +354,7 @@ namespace ACBr.Net.TEF
                 {
                     Interromper = interromper
                 };
-                Parent.DoOnAguardaResp(e);
+                parent.DoOnAguardaResp(e);
             }
 
             this.Log().InfoFormat("{0} FinalizarRequisicao: {1}, Fim da Espera de: {2} {3}", Name, Requisicao.Header,
@@ -362,7 +362,7 @@ namespace ACBr.Net.TEF
 
             Guard.Against<ACBrTEFGPNaoRespondeException>(!File.Exists(ArqSTS), ACBrTEF.CacbrTefdErroNaoAtivo, Name);
 
-            Parent.EstadoReq = ReqEstado.ConferindoResposta;
+            parent.EstadoReq = ReqEstado.ConferindoResposta;
             this.Log().InfoFormat("{0} FinalizarRequisicao: {1}, Verificando conteudo de: {2}", Name, Requisicao.Header, ArqSTS);
 
             Resposta.LeArquivo(ArqSTS);
@@ -377,7 +377,7 @@ namespace ACBr.Net.TEF
                 throw new ACBrException("Falha na comunicação com o Gereciador Padrão:" + Name);
             }
 
-            Parent.EstadoReq = ReqEstado.Finalizada;
+            parent.EstadoReq = ReqEstado.Finalizada;
         }
 
         /// <summary>
@@ -405,13 +405,13 @@ namespace ACBr.Net.TEF
 
             if (Requisicao.Header.IsIn("CNF", "ATV"))
             {
-                if (Parent.TecladoBloqueado)
+                if (parent.TecladoBloqueado)
                 {
-                    Parent.BloquearMouseTeclado(false);
+                    parent.BloquearMouseTeclado(false);
                 }
             }
 
-            Parent.EstadoResp = RespEstado.AguardandoResposta;
+            parent.EstadoResp = RespEstado.AguardandoResposta;
             var interromper = false;
             var ok = false;
 
@@ -428,11 +428,11 @@ namespace ACBr.Net.TEF
 
                         do
                         {
-                            Thread.Sleep(Parent.EsperaSleep); // Necessário Para não sobrecarregar a CPU //
-                            if (!Parent.EventAssigned(nameof(Parent.OnAguardaResp))) continue;
+                            Thread.Sleep(parent.EsperaSleep); // Necessário Para não sobrecarregar a CPU //
+                            if (!parent.EventAssigned(nameof(parent.OnAguardaResp))) continue;
 
                             var e = new AguardaRespEventArgs(ArqSTS, DateTime.Now.Subtract(tempoInicioEspera).Seconds);
-                            Parent.DoOnAguardaResp(e);
+                            parent.DoOnAguardaResp(e);
                             interromper = e.Interromper;
                         } while (!File.Exists(ArqResp) && !interromper);
 
@@ -442,10 +442,10 @@ namespace ACBr.Net.TEF
                     finally
                     {
                         AguardandoResposta = false;
-                        if (Parent.EventAssigned(nameof(Parent.OnAguardaResp)))
+                        if (parent.EventAssigned(nameof(parent.OnAguardaResp)))
                         {
                             var e = new AguardaRespEventArgs(ArqSTS, -1) { Interromper = interromper };
-                            Parent.DoOnAguardaResp(e);
+                            parent.DoOnAguardaResp(e);
                         }
                     }
 
@@ -469,7 +469,7 @@ namespace ACBr.Net.TEF
             finally
             {
                 Resposta.TipoGP = Tipo;
-                Parent.EstadoResp = RespEstado.Nenhum;
+                parent.EstadoResp = RespEstado.Nenhum;
                 UtilTEF.DeleteFile(ArqReq); // Apaga a Requisicao (caso o G.P. nao tenha apagado)
             }
         }
@@ -480,7 +480,7 @@ namespace ACBr.Net.TEF
         /// <param name="apagarArqResp">if set to <c>true</c> [apagar arq resp].</param>
         protected virtual void FinalizarResposta(bool apagarArqResp)
         {
-            Parent.EstadoResp = RespEstado.Concluida;
+            parent.EstadoResp = RespEstado.Concluida;
             this.Log().InfoFormat("{0} FinalizarResposta: {1}", Name, Requisicao.Header);
 
             if (apagarArqResp)
@@ -514,7 +514,7 @@ namespace ACBr.Net.TEF
             do
             {
                 i++;
-                file = Path.Combine(Parent.PathBackup, $@"ACBr_{Name}_{i:000}.tef");
+                file = Path.Combine(parent.PathBackup, $@"ACBr_{Name}_{i:000}.tef");
             } while (File.Exists(file));
 
             this.Log().InfoFormat("{0} CopiarResposta: {1} - {2} Arq: {3}", Name, Resposta.Header, Resposta.Id, file);
@@ -531,26 +531,26 @@ namespace ACBr.Net.TEF
         {
             VerificarIniciouRequisicao();
             this.Log().InfoFormat("{0} ProcessarResposta: {1}", Name, Requisicao.Header);
-            Parent.EstadoResp = RespEstado.Processando;
+            parent.EstadoResp = RespEstado.Processando;
 
             if (Resposta.QtdLinhasComprovante > 0)
             {
                 try
                 {
                     var respostaPendente = Resposta.Clone();
-                    Parent.RespostasPendentes.Add(respostaPendente);
+                    parent.RespostasPendentes.Add(respostaPendente);
                     ImprimirRelatorio();
-                    Parent.DoOnDepoisConfirmarTransacoes();
+                    parent.DoOnDepoisConfirmarTransacoes();
                 }
                 finally
                 {
-                    Parent.RespostasPendentes.Clear();
+                    parent.RespostasPendentes.Clear();
                 }
             }
             else
             {
                 if (Resposta.TextoEspecialOperador.IsEmpty()) return;
-                Parent.DoExibeMsg(OperacaoMensagem.OK, Resposta.TextoEspecialOperador);
+                parent.DoExibeMsg(OperacaoMensagem.OK, Resposta.TextoEspecialOperador);
             }
         }
 
@@ -567,7 +567,7 @@ namespace ACBr.Net.TEF
                 indicePagamento, valor);
 
             var ret = Resposta.TransacaoAprovada;
-            var ultimaTransacao = valor >= Parent.RespostasPendentes.SaldoRestante;
+            var ultimaTransacao = valor >= parent.RespostasPendentes.SaldoRestante;
 
             //Se a transação não foi aprovada, faz tratamento e sai
             if (!Resposta.TransacaoAprovada)
@@ -576,12 +576,12 @@ namespace ACBr.Net.TEF
                 FinalizarResposta(true); //True = Apaga Arquivo de Resposta
 
                 //Ja tem RespostasPendentes ?
-                if (!ultimaTransacao || Parent.RespostasPendentes.Count <= 0) return ret;
-                if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroOutraFormaPagamento) ==
+                if (!ultimaTransacao || parent.RespostasPendentes.Count <= 0) return ret;
+                if (parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroOutraFormaPagamento) ==
                     ModalResult.Yes) return ret;
 
-                Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
-                Parent.CancelarTransacoesPendentes();
+                parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                parent.CancelarTransacoesPendentes();
 
                 return ret;
             }
@@ -598,69 +598,9 @@ namespace ACBr.Net.TEF
             //Cria cópia do Objeto Resp, e salva no ObjectList "RespostasPendentes"
             var respostaPendete = Resposta.Clone();
             respostaPendete.ArqRespPendente = ArqResp;
-            respostaPendete.ViaClienteReduzida = Parent.ImprimirViaClienteReduzida;
-            Parent.RespostasPendentes.Add(respostaPendete);
+            respostaPendete.ViaClienteReduzida = parent.ImprimirViaClienteReduzida;
+            parent.RespostasPendentes.Add(respostaPendete);
 
-            if (!Parent.AutoEfetuarPagamento) return ret;
-
-            var impressaoOk = false;
-            var tecladoEstavaLivre = true;
-
-            try
-            {
-                while (!impressaoOk)
-                {
-                    try
-                    {
-                        tecladoEstavaLivre = !Parent.TecladoBloqueado;
-                        Parent.BloquearMouseTeclado();
-                        Parent.PagamentoVenda(indicePagamento, valor);
-                        Parent.RespostasPendentes.SaldoAPagar = (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
-                        if (respostaPendete.Header == "CHQ" && Parent.ChqEmGerencial)
-                            respostaPendete.OrdemPagamento = 999;
-                        else
-                            respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
-
-                        impressaoOk = true;
-                    }
-                    catch (ACBrTEFPrintException)
-                    {
-                        impressaoOk = false;
-                    }
-                    finally
-                    {
-                        if (tecladoEstavaLivre)
-                            Parent.BloquearMouseTeclado(false);
-                    }
-
-                    if (impressaoOk) continue;
-                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) == ModalResult.Yes) continue;
-
-                    try
-                    {
-                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
-                    }
-                    catch (Exception)
-                    {
-                        // Exceção Muda
-                        break;
-                    }
-                }
-            }
-            finally
-            {
-                if (!impressaoOk) CancelarTransacoesPendentes();
-            }
-
-            if (!impressaoOk) return ret;
-
-            FinalizarResposta(false);
-
-            if (Parent.RespostasPendentes.SaldoRestante > 0) return ret;
-            if (!Parent.AutoFinalizarCupom) return ret;
-
-            Parent.FinalizarCupom(false);
-            Parent.ImprimirTransacoesPendentes();
             return ret;
         }
 
@@ -684,7 +624,7 @@ namespace ACBr.Net.TEF
 
             this.Log().InfoFormat("{0} IniciarRequisicao: {1}", Name, Resposta.Header);
 
-            if (SalvarArquivoBackup)
+            if (salvarArquivoBackup)
             {
                 CopiarResposta();
             }
@@ -695,7 +635,7 @@ namespace ACBr.Net.TEF
 
             try
             {
-                Parent.BloquearMouseTeclado();
+                parent.BloquearMouseTeclado();
 
                 while (!impressaoOk)
                 {
@@ -707,17 +647,17 @@ namespace ACBr.Net.TEF
                             switch (estado)
                             {
                                 case EstadoVenda.CupomVinculado:
-                                    Parent.DoComandaVenda(OperacaoVenda.FechaVinculado);
+                                    parent.DoComandaVenda(OperacaoVenda.FechaVinculado);
                                     break;
 
                                 case EstadoVenda.RelatorioGerencial:
-                                    Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
+                                    parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
                                     break;
 
                                 case EstadoVenda.Venda:
                                 case EstadoVenda.Pagamento:
                                 case EstadoVenda.NaoFiscal:
-                                    Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                                    parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
                                     break;
                             }
 
@@ -730,13 +670,13 @@ namespace ACBr.Net.TEF
                         if (!Resposta.TextoEspecialOperador.IsEmpty())
                         {
                             removeMsg = true;
-                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, Resposta.TextoEspecialOperador);
+                            parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, Resposta.TextoEspecialOperador);
                         }
 
                         if (!Resposta.TextoEspecialCliente.IsEmpty())
                         {
                             removeMsg = true;
-                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, Resposta.TextoEspecialCliente);
+                            parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, Resposta.TextoEspecialCliente);
                         }
 
                         for (var i = 1; i <= NumVias; i++)
@@ -746,26 +686,26 @@ namespace ACBr.Net.TEF
 
                             if (!gerencialAberto)
                             {
-                                Parent.DoComandaVenda(OperacaoVenda.AbreGerencial);
+                                parent.DoComandaVenda(OperacaoVenda.AbreGerencial);
                                 gerencialAberto = true;
                             }
                             else
                             {
                                 if (i != 1)
                                 {
-                                    Parent.DoComandaVenda(OperacaoVenda.PulaLinhas);
+                                    parent.DoComandaVenda(OperacaoVenda.PulaLinhas);
                                 }
 
                                 var msg = string.Format(ACBrTEF.CacbrTefdDestaqueVia, i);
-                                Parent.DoExibeMsg(OperacaoMensagem.DestaqueVia, msg);
+                                parent.DoExibeMsg(OperacaoMensagem.DestaqueVia, msg);
                             }
 
-                            Parent.DoVendaImprimeVia(TipoRelatorio.Gerencial, i, imagemComprovante.ToArray());
+                            parent.DoVendaImprimeVia(TipoRelatorio.Gerencial, i, imagemComprovante.ToArray());
                         }
 
                         if (gerencialAberto)
                         {
-                            Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
+                            parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
                         }
 
                         impressaoOk = true;
@@ -782,16 +722,16 @@ namespace ACBr.Net.TEF
                             if (impressaoOk)
                             {
                                 while (DateTime.Now.Subtract(inicio).Seconds < 5)
-                                    Thread.Sleep(Parent.EsperaSleep);
+                                    Thread.Sleep(parent.EsperaSleep);
                             }
 
-                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador);
-                            Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente);
+                            parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador);
+                            parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente);
                         }
                     }
 
                     if (impressaoOk) continue;
-                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes) break;
+                    if (parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes) break;
                 }
             }
             finally
@@ -814,7 +754,7 @@ namespace ACBr.Net.TEF
                     UtilTEF.DeleteFile(arqBackup);
                 }
 
-                Parent.BloquearMouseTeclado(false);
+                parent.BloquearMouseTeclado(false);
             }
 
             Guard.Against<ACBrTEFPrintException>(!impressaoOk, "Impressão de Relatório Falhou");
@@ -827,10 +767,10 @@ namespace ACBr.Net.TEF
         {
             var arquivosVerficar = new List<string>();
 
-            Parent.RespostasPendentes.Clear();
+            parent.RespostasPendentes.Clear();
 
             // Achando Arquivos de Backup deste GP
-            arquivosVerficar.AddRange(Directory.EnumerateFiles(Parent.PathBackup, "ACBr_" + Name + "_*.tef"));
+            arquivosVerficar.AddRange(Directory.EnumerateFiles(parent.PathBackup, "ACBr_" + Name + "_*.tef"));
             var nsUs = string.Empty;
             var exibeMsg = arquivosVerficar.Any();
 
@@ -849,7 +789,7 @@ namespace ACBr.Net.TEF
                     CNF();
 
                     var respostaConfirmada = Resposta.Clone();
-                    Parent.RespostasPendentes.Add(respostaConfirmada);
+                    parent.RespostasPendentes.Add(respostaConfirmada);
 
                     if (!Resposta.NSU.IsEmpty())
                         nsUs += $"NSU: {Resposta.NSU}{Environment.NewLine}";
@@ -863,12 +803,12 @@ namespace ACBr.Net.TEF
                 }
             }
 
-            Parent.DoOnDepoisConfirmarTransacoes();
-            Parent.RespostasPendentes.Clear();
+            parent.DoOnDepoisConfirmarTransacoes();
+            parent.RespostasPendentes.Clear();
 
             if (exibeMsg)
             {
-                Parent.DoExibeMsg(OperacaoMensagem.OK,
+                parent.DoExibeMsg(OperacaoMensagem.OK,
                     ACBrTEF.CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(nsUs));
             }
         }
@@ -882,43 +822,43 @@ namespace ACBr.Net.TEF
             valor = valor.RoundABNT();
             Guard.Against<ACBrException>(valor < 0, "Valor inválido");
 
-            if (!Parent.IsDFe)
+            if (!parent.IsDFe)
             {
                 Guard.Against<ACBrException>(!Estado.IsIn(EstadoVenda.Venda, EstadoVenda.Pagamento, EstadoVenda.NaoFiscal) &&
-                                             !Parent.IsDFe, "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
+                                             !parent.IsDFe, "ECF deve estar em Estado de \"Venda\", \"Pagamento\" ou \"Não Fiscal\"");
 
-                var saldoAPagar = Parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
-                saldoAPagar -= Parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
-                Parent.RespostasPendentes.SaldoAPagar = saldoAPagar;
-                Parent.RespostasPendentes.SaldoRestante = valor;
+                var saldoAPagar = parent.DoOnInfoVendaAsDecimal(InfoVenda.SubTotal);
+                saldoAPagar -= parent.DoOnInfoVendaAsDecimal(InfoVenda.TotalAPagar);
+                parent.RespostasPendentes.SaldoAPagar = saldoAPagar;
+                parent.RespostasPendentes.SaldoRestante = valor;
 
-                Parent.RespostasPendentes.SaldoRestante = valor;
+                parent.RespostasPendentes.SaldoRestante = valor;
 
-                if (Parent.TrocoMaximo <= 0)
+                if (parent.TrocoMaximo <= 0)
                 {
-                    Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante,
+                    Guard.Against<ACBrException>(valor > parent.RespostasPendentes.SaldoRestante,
                         "Operação TEF deve ser limitada a Saldo restante a Pagar");
                 }
                 else
                 {
-                    Guard.Against<ACBrException>(valor > Parent.RespostasPendentes.SaldoRestante + Parent.TrocoMaximo,
-                        "Operação TEF permite Troco Máximo de {0:c}", Parent.TrocoMaximo);
+                    Guard.Against<ACBrException>(valor > parent.RespostasPendentes.SaldoRestante + parent.TrocoMaximo,
+                        "Operação TEF permite Troco Máximo de {0:c}", parent.TrocoMaximo);
                 }
             }
 
-            Guard.Against<ACBrException>(Parent.MultiplosCartoes && Parent.NumeroMaximoCartoes > 0 &&
-                                         Parent.RespostasPendentes.Count >= Parent.NumeroMaximoCartoes,
-                                         "Multiplos Cartões Limitado a {0}", Parent.NumeroMaximoCartoes);
+            Guard.Against<ACBrException>(parent.MultiplosCartoes && parent.NumeroMaximoCartoes > 0 &&
+                                         parent.RespostasPendentes.Count >= parent.NumeroMaximoCartoes,
+                                         "Multiplos Cartões Limitado a {0}", parent.NumeroMaximoCartoes);
             if (this is TEFTxt)
             {
                 // Tem multiplos Cartoes ?
                 // Valor é diferente do Saldo Restante a Pagar ?
                 // Está no último cartão ?
-                Guard.Against<ACBrException>(Parent.MultiplosCartoes && Parent.NumeroMaximoCartoes > 0 &&
-                                            valor != Parent.RespostasPendentes.SaldoRestante &&
-                                            Parent.NumeroMaximoCartoes - Parent.RespostasPendentes.Count <= 1,
+                Guard.Against<ACBrException>(parent.MultiplosCartoes && parent.NumeroMaximoCartoes > 0 &&
+                                            valor != parent.RespostasPendentes.SaldoRestante &&
+                                            parent.NumeroMaximoCartoes - parent.RespostasPendentes.Count <= 1,
                     "Multiplos Cartões Limitado a {0}.{1}Esta Operação TEF deve ser igual ao Saldo a Pagar.",
-                    Parent.NumeroMaximoCartoes, Environment.NewLine);
+                    parent.NumeroMaximoCartoes, Environment.NewLine);
             }
         }
 
@@ -974,7 +914,7 @@ namespace ACBr.Net.TEF
                 Resposta.Clear();
             }
 
-            VerificarTransacoesPendentes(Parent.ConfirmarAntesDosComprovantes);
+            VerificarTransacoesPendentes(parent.ConfirmarAntesDosComprovantes);
             VerificaAtivo();
         }
 
@@ -999,7 +939,7 @@ namespace ACBr.Net.TEF
 
             Process.Start(GPExeName);
             Thread.Sleep(2000);
-            Parent.RestaurarFocoAplicacao();
+            parent.RestaurarFocoAplicacao();
         }
 
         /// <summary>
@@ -1016,7 +956,7 @@ namespace ACBr.Net.TEF
                 if (AutoAtivarGp)
                 {
                     const string msg = "O Gerenciador Padrão não está ativo e será ativado automaticamente!";
-                    Parent.DoExibeMsg(OperacaoMensagem.OK, msg);
+                    parent.DoExibeMsg(OperacaoMensagem.OK, msg);
                     AtivarGP();
                     ATV();
                 }
@@ -1057,7 +997,7 @@ namespace ACBr.Net.TEF
                 // responder diferente de 'EstadoVenda.Outro',   (Veja exemplo nos fontes do TEFDDemo) }
             }
 
-            Parent.GpAtual = Tipo;
+            parent.GpAtual = Tipo;
 
             // Cupom Ficou aberto?? ...Se SIM, Cancele tudo... //
             // NAO, Cupom Fechado, Pode confirmar e Mandar aviso para re-imprimir //
@@ -1084,7 +1024,7 @@ namespace ACBr.Net.TEF
 
             //Achando Arquivos de Backup deste GP
             var searchPattern = $"ACBr_{Name}_*.tef";
-            arquivosVerificar.AddRange(Directory.GetFiles(Parent.PathBackup, searchPattern));
+            arquivosVerificar.AddRange(Directory.GetFiles(parent.PathBackup, searchPattern));
 
             //Vamos processar primeiro os CNCs e ADMs, e as Não Confirmadas
             arquivosVerificar = arquivosVerificar.OrderBy(x =>
@@ -1127,8 +1067,8 @@ namespace ACBr.Net.TEF
 
                 try
                 {
-                    if (Parent.EventAssigned(nameof(Parent.OnAntesCancelarTransacao)))
-                        Parent.DoOnAntesCancelarTransacao(respostaCancelada);
+                    if (parent.EventAssigned(nameof(parent.OnAntesCancelarTransacao)))
+                        parent.DoOnAntesCancelarTransacao(respostaCancelada);
                 }
                 catch (Exception e)
                 {
@@ -1148,8 +1088,8 @@ namespace ACBr.Net.TEF
                 respostasCanceladas.Add(respostaCancelada);
             }
 
-            if (Parent.EventAssigned(nameof(Parent.OnDepoisCancelarTransacoes)))
-                Parent.DoOnDepoisCancelarTrasacoes();
+            if (parent.EventAssigned(nameof(parent.OnDepoisCancelarTransacoes)))
+                parent.DoOnDepoisCancelarTrasacoes();
         }
 
         /// <summary>
@@ -1162,8 +1102,8 @@ namespace ACBr.Net.TEF
             //Se for Multiplos Cartoes precisa confirmar a transação anterior antes de
             //enviar uma Nova
 
-            foreach (var pendente in Parent.RespostasPendentes
-                .Where(x => !x.CNFEnviado && x.TipoGP == Parent.GpAtual && TransacaoEPagamento(x.Header)))
+            foreach (var pendente in parent.RespostasPendentes
+                .Where(x => !x.CNFEnviado && x.TipoGP == parent.GpAtual && TransacaoEPagamento(x.Header)))
             {
                 CNF(pendente.Rede, pendente.NSU, pendente.Finalizacao, pendente.DocumentoVinculado);
                 pendente.CNFEnviado = true;
@@ -1454,7 +1394,7 @@ namespace ACBr.Net.TEF
 
             var msg = msgStr.ToString();
             msg = msg.TrimEnd(Environment.NewLine.ToCharArray());
-            Parent.DoExibeMsg(OperacaoMensagem.OK, msg);
+            parent.DoExibeMsg(OperacaoMensagem.OK, msg);
         }
 
         /// <summary>

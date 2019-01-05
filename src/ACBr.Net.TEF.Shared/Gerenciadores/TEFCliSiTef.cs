@@ -53,14 +53,10 @@ namespace ACBr.Net.TEF.Gerenciadores
         internal const bool CacbrTefdCliSiTefImprimeGerencialConcomitante = false;
         internal const string CacbrTefdCliSiTefPressioneEnter = "PRESSIONE <ENTER>";
         internal const string CacbrTefdCliSiTefTransacaoNaoEfetuada = "Transação não efetuada.";
-
-        internal const string CacbrTefdCliSiTefTransacaoNaoEfetuadaReterCupom =
-            "Transação não efetuada.\r\nFavor reter o Cupom";
-
+        internal const string CacbrTefdCliSiTefTransacaoNaoEfetuadaReterCupom = "Transação não efetuada.\r\nFavor reter o Cupom";
         internal const string CacbrTefdCliSiTefTransacaoEfetuadaReImprimir = "Transação TEF efetuada.\r\n" +
                                                                              "Favor reimprimir último Cupom.\r\n" +
                                                                              "{0}\r\n(Para Cielo utilizar os 6 últimos dígitos.)";
-
         internal const string CacbrTefdCliSiTefNaoInicializado = "CliSiTEF não inicializado";
         internal const string CacbrTefdCliSiTefNaoConcluido = "Requisição anterior não concluida";
         internal const string CacbrTefdCliSiTefErro1 = "Endereço IP inválido ou não resolvido";
@@ -724,12 +720,14 @@ namespace ACBr.Net.TEF.Gerenciadores
 
         public Dictionary<string, string> ParametrosAdicionais { get; }
 
-        public string DocumentoFiscal {
-            get => documentoFiscal.IsEmpty() ? DateTime.Now.ToString("hhmmss") : documentoFiscal;
+        public string DocumentoFiscal
+        {
+            get => documentoFiscal.IsEmpty() ? documentoFiscal = DateTime.Now.ToString("hhmmss") : documentoFiscal;
             set => documentoFiscal = value;
         }
 
-        public DateTime DataHoraFiscal {
+        public DateTime DataHoraFiscal
+        {
             get => dataHoraFiscal ?? DateTime.Now;
             set => dataHoraFiscal = value;
         }
@@ -771,7 +769,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             var suportaDesconto = SuportaDesconto();
             if (!ParametrosAdicionais.ContainsKey("VersaoAutomacaoCielo") && suportaDesconto)
-                ParametrosAdicionais.Add("VersaoAutomacaoCielo", $"{Parent.Identificacao.SoftwareHouse.FillLeft(8)}10");
+                ParametrosAdicionais.Add("VersaoAutomacaoCielo", $"{parent.Identificacao.SoftwareHouse.FillLeft(8)}10");
 
             var parametros = ParametrosAdicionais.ToAdicParam();
 
@@ -1127,7 +1125,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                 aMsg = estado == EstadoVenda.Outro ? CacbrTefdCliSiTefTransacaoNaoEfetuada : CacbrTefdCliSiTefTransacaoNaoEfetuadaReterCupom;
             }
 
-            Parent.DoExibeMsg(OperacaoMensagem.OK, aMsg);
+            parent.DoExibeMsg(OperacaoMensagem.OK, aMsg);
         }
 
         protected override void VerificarIniciouRequisicao()
@@ -1139,7 +1137,7 @@ namespace ACBr.Net.TEF.Gerenciadores
         {
             this.Log().Info($"{Name} ProcessarResposta: {Requisicao.Header}");
 
-            Parent.EstadoResp = RespEstado.Processando;
+            parent.EstadoResp = RespEstado.Processando;
 
             if (Resposta.QtdLinhasComprovante < 1) return;
 
@@ -1148,13 +1146,13 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             try
             {
-                Parent.RespostasPendentes.Add(respostaPendente);
+                parent.RespostasPendentes.Add(respostaPendente);
                 ImprimirRelatorio();
-                Parent.DoOnDepoisConfirmarTransacoes();
+                parent.DoOnDepoisConfirmarTransacoes();
             }
             finally
             {
-                Parent.RespostasPendentes.Clear();
+                parent.RespostasPendentes.Clear();
             }
         }
 
@@ -1171,53 +1169,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             //Cria cópia do Objeto Resp, e salva no ObjectList "RespostasPendentes"
             var respostaPendete = Resposta.Clone();
-            Parent.RespostasPendentes.Add(respostaPendete);
+            parent.RespostasPendentes.Add(respostaPendete);
 
-            if (!Parent.AutoEfetuarPagamento) return true;
-
-            var impressaoOk = false;
-
-            try
-            {
-                while (!impressaoOk)
-                {
-                    try
-                    {
-                        Parent.PagamentoVenda(indicePagamento, valor);
-                        Parent.RespostasPendentes.SaldoAPagar = (Parent.RespostasPendentes.SaldoAPagar - valor).RoundABNT();
-                        respostaPendete.OrdemPagamento = Parent.RespostasPendentes.Count - 1;
-                        impressaoOk = true;
-                    }
-                    catch (ACBrTEFPrintException)
-                    {
-                        impressaoOk = false;
-                    }
-
-                    if (impressaoOk) continue;
-                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) == ModalResult.Yes) continue;
-
-                    try
-                    {
-                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
-                    }
-                    catch (Exception)
-                    {
-                        //Exceção Muda
-                        break;
-                    }
-                }
-            }
-            finally
-            {
-                if (!impressaoOk) CancelarTransacoesPendentes();
-            }
-
-            if (Parent.RespostasPendentes.SaldoRestante > 0) return true;
-            if (!Parent.AutoFinalizarCupom) return true;
-
-            //False não desbloqueia o MouseTeclado
-            Parent.FinalizarCupom(false);
-            Parent.ImprimirTransacoesPendentes();
             return true;
         }
 
@@ -1265,13 +1218,13 @@ namespace ACBr.Net.TEF.Gerenciadores
                 restricoes);
 
             Resposta.Clear();
-            IdSeq++;
+            idSeq++;
             if (documento.IsEmpty())
-                documento = IdSeq.ToString();
+                documento = idSeq.ToString();
 
             Resposta.DocumentoVinculado = documento;
             Resposta.Conteudo.GravarInformacao(header, 899, 100);
-            Resposta.Conteudo.GravarInformacao(IdSeq, 899, 101);
+            Resposta.Conteudo.GravarInformacao(idSeq, 899, 101);
             Resposta.Conteudo.GravarInformacao(documento, 899, 102);
             Resposta.Conteudo.GravarInformacao(Math.Truncate(Math.Round(valor * 100)), 899, 103);
             Resposta.TipoGP = Tipo;
@@ -1303,7 +1256,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
             try
             {
-                Parent.BloquearMouseTeclado();
+                parent.BloquearMouseTeclado();
 
                 int result;
                 var buffer = new StringBuilder(BufferSize);
@@ -1386,17 +1339,17 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                                 switch (estado)
                                                                 {
                                                                     case EstadoVenda.CupomVinculado:
-                                                                        Parent.DoComandaVenda(OperacaoVenda.FechaVinculado);
+                                                                        parent.DoComandaVenda(OperacaoVenda.FechaVinculado);
                                                                         break;
 
                                                                     case EstadoVenda.RelatorioGerencial:
-                                                                        Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
+                                                                        parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
                                                                         break;
 
                                                                     case EstadoVenda.Venda:
                                                                     case EstadoVenda.Pagamento:
                                                                     case EstadoVenda.NaoFiscal:
-                                                                        Parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
+                                                                        parent.DoComandaVenda(OperacaoVenda.CancelaCupom);
                                                                         break;
                                                                 }
 
@@ -1411,16 +1364,16 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                             {
                                                                 if (!gerencialAberto)
                                                                 {
-                                                                    Parent.DoComandaVenda(OperacaoVenda.AbreGerencial);
+                                                                    parent.DoComandaVenda(OperacaoVenda.AbreGerencial);
                                                                     gerencialAberto = true;
                                                                 }
                                                                 else
                                                                 {
-                                                                    Parent.DoComandaVenda(OperacaoVenda.PulaLinhas);
-                                                                    Parent.DoExibeMsg(OperacaoMensagem.DestaqueVia, ACBrTEF.CacbrTefdDestaqueVia.Substitute(1));
+                                                                    parent.DoComandaVenda(OperacaoVenda.PulaLinhas);
+                                                                    parent.DoExibeMsg(OperacaoMensagem.DestaqueVia, ACBrTEF.CacbrTefdDestaqueVia.Substitute(1));
                                                                 }
 
-                                                                Parent.DoVendaImprimeVia(TipoRelatorio.Gerencial,
+                                                                parent.DoVendaImprimeVia(TipoRelatorio.Gerencial,
                                                                     i - 120, mensagem.Split((char)10));
                                                                 impressaoOk = true;
                                                             }
@@ -1430,7 +1383,7 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                                                         if (tipoCampo == 122 && gerencialAberto)
                                                         {
-                                                            Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
+                                                            parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
                                                             gerencialAberto = false;
                                                         }
                                                     }
@@ -1440,7 +1393,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                                                     }
 
                                                     if (impressaoOk) continue;
-                                                    if (Parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes) break;
+                                                    if (parent.DoExibeMsg(OperacaoMensagem.YesNo, ACBrTEF.CacbrTefdErroEcfNaoResponde) != ModalResult.Yes) break;
 
                                                     i = 121;
                                                     fechaGerencialAberto = true;
@@ -1463,19 +1416,19 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                             case CommandType.DisplayOperatorMessage:
                                 mensagemOperador = processaMensagemTela(mensagem);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
+                                parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayCustomerMessage:
                                 mensagemCliente = processaMensagemTela(mensagem);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
+                                parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayMessage:
                                 mensagemOperador = processaMensagemTela(mensagem);
                                 mensagemCliente = mensagemOperador;
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
-                                Parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
+                                parent.DoExibeMsg(OperacaoMensagem.ExibirMsgOperador, mensagemOperador, tipoCampo == 5005);
+                                parent.DoExibeMsg(OperacaoMensagem.ExibirMsgCliente, mensagemCliente, tipoCampo == 5005);
                                 break;
 
                             case CommandType.DisplayMenuHeader:
@@ -1483,16 +1436,16 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 break;
 
                             case CommandType.ClearOperatorMessage:
-                                Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
+                                parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
                                 break;
 
                             case CommandType.ClearCustomerMessage:
-                                Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
+                                parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
                                 break;
 
                             case CommandType.ClearMessage:
-                                Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
-                                Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
+                                parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
+                                parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
                                 break;
 
                             case CommandType.ClearMenuHeader:
@@ -1503,13 +1456,13 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 if (mensagem.IsEmpty())
                                     mensagem = "CONFIRMA ?";
 
-                                respostaSitef = Parent.DoExibeMsg(OperacaoMensagem.YesNo, mensagem) == ModalResult.Yes ? "0" : "1";
+                                respostaSitef = parent.DoExibeMsg(OperacaoMensagem.YesNo, mensagem) == ModalResult.Yes ? "0" : "1";
                                 if (tipoCampo == 5013 && respostaSitef == "1") interromper = false;
                                 break;
 
                             case CommandType.DisplayMenuOptions:
                                 var itens = mensagem.Split(';');
-                                Parent.BloquearMouseTeclado(false);
+                                parent.BloquearMouseTeclado(false);
 
                                 var exibeMenuEventArgs = new ExibeMenuEventArgs(captionMenu, itens);
                                 OnExibeMenu.Raise(this, exibeMenuEventArgs);
@@ -1528,50 +1481,50 @@ namespace ACBr.Net.TEF.Gerenciadores
                                 if (mensagem.IsEmpty())
                                     mensagem = CacbrTefdCliSiTefPressioneEnter;
 
-                                Parent.DoExibeMsg(OperacaoMensagem.OK, mensagem);
+                                parent.DoExibeMsg(OperacaoMensagem.OK, mensagem);
                                 break;
 
                             case CommandType.CancelPinPadOperation:
                                 interromper = false;
 
                                 var aguardaRespEventArgs = new AguardaRespEventArgs("23", 0, interromper);
-                                Parent.DoOnAguardaResp(aguardaRespEventArgs);
+                                parent.DoOnAguardaResp(aguardaRespEventArgs);
                                 interromper = aguardaRespEventArgs.Interromper;
                                 if (interromper)
                                     continua = -1;
                                 break;
 
                             case CommandType.TextInputNeeded:
-                                Parent.BloquearMouseTeclado(false);
+                                parent.BloquearMouseTeclado(false);
                                 var obterCampoTexto = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.String);
                                 OnObtemCampo.Raise(this, obterCampoTexto);
                                 respostaSitef = obterCampoTexto.Resposta;
                                 ((RetornoCliSiTef)Resposta).GravaInformacao(tipoCampo, respostaSitef);
-                                Parent.BloquearMouseTeclado();
+                                parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.CheckInputNeeded:
-                                Parent.BloquearMouseTeclado(false);
+                                parent.BloquearMouseTeclado(false);
                                 var obterCampoCheque = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.CMC7);
                                 OnObtemCampo.Raise(this, obterCampoCheque);
                                 respostaSitef = obterCampoCheque.Resposta;
-                                Parent.BloquearMouseTeclado();
+                                parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.MoneyInputNeeded:
-                                Parent.BloquearMouseTeclado(false);
+                                parent.BloquearMouseTeclado(false);
                                 var obterCampoDecimal = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.Double);
                                 OnObtemCampo.Raise(this, obterCampoDecimal);
                                 respostaSitef = obterCampoDecimal.Resposta;
-                                Parent.BloquearMouseTeclado();
+                                parent.BloquearMouseTeclado();
                                 break;
 
                             case CommandType.BarcodeInputNeeded:
-                                Parent.BloquearMouseTeclado(false);
+                                parent.BloquearMouseTeclado(false);
                                 var obterCampoBarcode = new ObtemCampoEventArgs(mensagem, tamanhoMinimo, tamanhoMaximo, tipoCampo, OperacaoCampo.BarCode);
                                 OnObtemCampo.Raise(this, obterCampoBarcode);
                                 respostaSitef = obterCampoBarcode.Resposta;
-                                Parent.BloquearMouseTeclado();
+                                parent.BloquearMouseTeclado();
                                 break;
                         }
                     }
@@ -1585,8 +1538,8 @@ namespace ACBr.Net.TEF.Gerenciadores
 
                     if (voltar && result == 10000 || !digitado)
                     {
-                        Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
-                        Parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
+                        parent.DoExibeMsg(OperacaoMensagem.RemoverMsgOperador);
+                        parent.DoExibeMsg(OperacaoMensagem.RemoverMsgCliente);
                     }
 
                     buffer.Clear();
@@ -1601,7 +1554,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                 {
                     try
                     {
-                        Parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
+                        parent.DoComandaVenda(OperacaoVenda.FechaGerencial);
                     }
                     catch (Exception)
                     {
@@ -1615,7 +1568,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                 if (houveImpressao || imprimirComprovantes || cancelamento)
                     FinalizarTransacao(impressaoOk, Resposta.DocumentoVinculado);
 
-                Parent.BloquearMouseTeclado(false);
+                parent.BloquearMouseTeclado(false);
 
                 this.Log().Debug(Resposta.Conteudo.AsString());
 
@@ -1623,7 +1576,7 @@ namespace ACBr.Net.TEF.Gerenciadores
                 Resposta.ConteudoToProperty();
 
                 if (houveImpressao && cancelamento)
-                    Parent.DoExibeMsg(OperacaoMensagem.OK, CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(Resposta.NSU));
+                    parent.DoExibeMsg(OperacaoMensagem.OK, CacbrTefdCliSiTefTransacaoEfetuadaReImprimir.Substitute(Resposta.NSU));
 
                 AguardandoResposta = false;
             }
@@ -1684,14 +1637,13 @@ namespace ACBr.Net.TEF.Gerenciadores
             }
 
             if (!erro.IsEmpty())
-                Parent.DoExibeMsg(OperacaoMensagem.OK, erro);
+                parent.DoExibeMsg(OperacaoMensagem.OK, erro);
         }
 
         private bool SuportaDesconto()
         {
-            return !Parent.Identificacao.SoftwareHouse.IsEmpty() &&
-                   Parent.EventAssigned(nameof(Parent.OnComandaVendaSubtotaliza)) &&
-                   !Parent.AutoEfetuarPagamento;
+            return !parent.Identificacao.SoftwareHouse.IsEmpty() &&
+                   parent.EventAssigned(nameof(parent.OnComandaVendaSubtotaliza));
         }
 
         #endregion Methods

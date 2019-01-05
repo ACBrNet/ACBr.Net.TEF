@@ -320,9 +320,6 @@ namespace ACBr.Net.TEF
         public bool SuportaReajusteValor { get; set; }
 
         [Category("Geral")]
-        public bool AutoEfetuarPagamento { get; set; }
-
-        [Category("Geral")]
         public bool AutoFinalizarCupom { get; set; }
 
         [Category("Geral")]
@@ -340,9 +337,11 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The estado req.</value>
         [Category("Geral")]
-        public ReqEstado EstadoReq {
+        public ReqEstado EstadoReq
+        {
             get => estadoReq;
-            set {
+            set
+            {
                 estadoReq = value;
                 OnMudaEstadoReq.Raise(this, new MudaEstadoReqEventArgs(value));
             }
@@ -360,9 +359,11 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The estado resp.</value>
         [Category("Geral")]
-        public RespEstado EstadoResp {
+        public RespEstado EstadoResp
+        {
             get => estadoResp;
-            set {
+            set
+            {
                 estadoResp = value;
                 OnMudaEstadoResp.Raise(this, new MudaEstadoRespEventArgs(value));
             }
@@ -397,9 +398,11 @@ namespace ACBr.Net.TEF
         /// </summary>
         /// <value>The gp atual.</value>
         [Browsable(false)]
-        public TEFTipo GpAtual {
+        public TEFTipo GpAtual
+        {
             get => gpAtual;
-            set {
+            set
+            {
                 if (gpAtual == value)
                     return;
 
